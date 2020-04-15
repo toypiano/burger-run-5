@@ -1,3 +1,13 @@
+:root {
+  --cl-primary: #cc8b29;
+  --cl-secondary: #8f5e1e;
+  --cl-light: #fff;
+
+  --fw-normal: 400;
+  --fw-bold: 700;
+  --fw-black: 900;
+}
+
 html {
   box-sizing: border-box;
 }

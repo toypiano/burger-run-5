@@ -17,7 +17,6 @@ function Layout({ className, children }) {
 
 export default styled(Layout)`
   ${(props) => css`
-    text-align: center;
     main {
       margin-top: 1em;
     }
