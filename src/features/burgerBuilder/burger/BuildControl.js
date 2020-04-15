@@ -36,14 +36,22 @@ const StyledButton = styled.button`
   &:active {
     filter: brightness(1.1);
   }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
-function BuildControl({ className, label }) {
+function BuildControl({ className, label, add, remove, disabled }) {
   return (
     <div className={className}>
       <label>{label}</label>
-      <StyledButton type="less">Less</StyledButton>
-      <StyledButton type="more">More</StyledButton>
+      <StyledButton type="less" onClick={remove} disabled={disabled}>
+        Less
+      </StyledButton>
+      <StyledButton type="more" onClick={add}>
+        More
+      </StyledButton>
     </div>
   );
 }

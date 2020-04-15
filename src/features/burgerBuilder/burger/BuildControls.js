@@ -8,11 +8,27 @@ BuildControls.propTypes = {
   controlItems: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-function BuildControls({ className, controlItems }) {
+function BuildControls({
+  className,
+  controlItems,
+  price,
+  addIngredient,
+  removeIngredient,
+  ingredients,
+}) {
   return (
     <div className={className}>
+      <p>
+        Current Price: $<span>{price.toFixed(2)}</span>
+      </p>
       {controlItems.map((item) => (
-        <BuildControl key={item} label={item} />
+        <BuildControl
+          key={item}
+          label={item}
+          add={() => addIngredient(item)}
+          remove={() => removeIngredient(item)}
+          disabled={ingredients[item] <= 0}
+        />
       ))}
     </div>
   );
@@ -25,5 +41,10 @@ export default styled(BuildControls)`
     display: flex;
     flex-direction: column;
     align-items: center;
+    p {
+      span {
+        font-weight: var(--fw-bold);
+      }
+    }
   `}
 `;
