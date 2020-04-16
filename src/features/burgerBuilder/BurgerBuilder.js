@@ -19,6 +19,14 @@ const INGREDIENT_PRICE = {
   beef: 1.3,
 };
 
+const getPurchasable = (ingredients) => {
+  const totalQty = Object.values(ingredients).reduce(
+    (sum, val) => sum + val,
+    0
+  );
+  return totalQty > 0;
+};
+
 function BurgerBuilder({ className }) {
   const [ingredients, setIngredients] = useState({ ...mock.ingredients });
   const [price, setPrice] = useState(BASE_PRICE);
@@ -42,6 +50,7 @@ function BurgerBuilder({ className }) {
         ingredients={ingredients}
         addIngredient={addIngredient}
         removeIngredient={removeIngredient}
+        isPurchasable={getPurchasable(ingredients)}
       />
     </div>
   );

@@ -31,10 +31,14 @@ const StyledButton = styled.button`
       ? lessButton
       : null}
   &:hover, &:focus {
-    filter: brightness(0.9);
+    filter: ${(props) =>
+      props.type === 'less' ? 'brightness(0.9)' : 'brightness(1.2)'};
   }
   &:active {
     filter: brightness(1.1);
+    position: relative;
+    top: 1px;
+    left: 1px;
   }
   &:disabled {
     opacity: 0.5;

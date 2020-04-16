@@ -2,6 +2,7 @@
   --cl-primary: #cc8b29;
   --cl-secondary: #8f5e1e;
   --cl-light: #fff;
+  --cl-accent: #dad735;
 
   --fz-h2: 1.5em;
 
@@ -31,4 +32,10 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+button {
+  font: inherit;
+  border: none;
+  cursor: pointer;
 }

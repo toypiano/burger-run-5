@@ -9,7 +9,7 @@ Burger.propTypes = {
 
 const mapIngredients = (ingredients) => {
   return Object.entries(ingredients).map(([ing, qty]) =>
-    [...Array(qty)].map((_) => <Ingredient key={ing} type={ing} />)
+    [...Array(qty)].map((_, i) => <Ingredient key={ing + i} type={ing} />)
   );
 };
 

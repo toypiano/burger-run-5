@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import BuildControl from './BuildControl';
+import OrderButton from './OrderButton';
 
 BuildControls.propTypes = {
   className: PropTypes.string.isRequired,
@@ -15,6 +16,7 @@ function BuildControls({
   addIngredient,
   removeIngredient,
   ingredients,
+  isPurchasable,
 }) {
   return (
     <div className={className}>
@@ -30,6 +32,7 @@ function BuildControls({
           disabled={ingredients[item] <= 0}
         />
       ))}
+      <OrderButton disabled={!isPurchasable}>Order Now</OrderButton>
     </div>
   );
 }
