@@ -17,6 +17,7 @@ function BuildControls({
   removeIngredient,
   ingredients,
   isPurchasable,
+  beginOrder,
 }) {
   return (
     <div className={className}>
@@ -32,7 +33,9 @@ function BuildControls({
           disabled={ingredients[item] <= 0}
         />
       ))}
-      <OrderButton disabled={!isPurchasable}>Order Now</OrderButton>
+      <OrderButton disabled={!isPurchasable} clicked={beginOrder}>
+        Order Now
+      </OrderButton>
     </div>
   );
 }

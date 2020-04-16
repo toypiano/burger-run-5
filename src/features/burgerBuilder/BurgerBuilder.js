@@ -6,6 +6,7 @@ import * as mock from '../../common/mock';
 import Burger from './burger/Burger';
 import BuildControls from './burger/BuildControls';
 import Modal from '../../common/ui/Modal';
+import OrderSummary from './burger/OrderSummary';
 
 BurgerBuilder.propTypes = {
   className: PropTypes.string.isRequired,
@@ -31,6 +32,7 @@ const getPurchasable = (ingredients) => {
 function BurgerBuilder({ className }) {
   const [ingredients, setIngredients] = useState({ ...mock.ingredients });
   const [price, setPrice] = useState(BASE_PRICE);
+  const [isOrdering, setIsOrdering] = useState(false);
 
   const addIngredient = (ing) => {
     setIngredients({ ...ingredients, [ing]: ingredients[ing] + 1 });
@@ -42,10 +44,17 @@ function BurgerBuilder({ className }) {
     setPrice((p) => p - INGREDIENT_PRICE[ing]);
   };
 
+  const beginOrder = () => {
+    setIsOrdering(true);
+  };
+  const cancelOrder = () => {
+    setIsOrdering(false);
+  };
+
   return (
     <div className={className}>
-      <Modal show closeModal={() => {}}>
-        Testing Modal
+      <Modal show={isOrdering} closeModal={cancelOrder}>
+        <OrderSummary ingredients={ingredients} />
       </Modal>
       <Burger ingredients={ingredients} />
       <BuildControls
@@ -55,6 +64,7 @@ function BurgerBuilder({ className }) {
         addIngredient={addIngredient}
         removeIngredient={removeIngredient}
         isPurchasable={getPurchasable(ingredients)}
+        beginOrder={beginOrder}
       />
     </div>
   );

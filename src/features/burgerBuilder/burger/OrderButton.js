@@ -6,9 +6,9 @@ OrderButton.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function OrderButton({ className, children, ...props }) {
+function OrderButton({ className, children, clicked, ...props }) {
   return (
-    <button className={className} {...props}>
+    <button className={className} onClick={clicked} {...props}>
       {children}
     </button>
   );
