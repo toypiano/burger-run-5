@@ -5,6 +5,7 @@ import * as mock from '../../common/mock';
 
 import Burger from './burger/Burger';
 import BuildControls from './burger/BuildControls';
+import Modal from '../../common/ui/Modal';
 
 BurgerBuilder.propTypes = {
   className: PropTypes.string.isRequired,
@@ -43,6 +44,9 @@ function BurgerBuilder({ className }) {
 
   return (
     <div className={className}>
+      <Modal show closeModal={() => {}}>
+        Testing Modal
+      </Modal>
       <Burger ingredients={ingredients} />
       <BuildControls
         price={price}

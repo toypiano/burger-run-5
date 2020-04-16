@@ -9,6 +9,9 @@
   --fw-normal: 400;
   --fw-bold: 700;
   --fw-black: 900;
+
+  --z-backdrop: 100;
+  --z-modal: 200;
 }
 
 html {
