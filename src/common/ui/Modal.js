@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Backdrop from './Backdrop';
+import { shadow } from '../css';
 
 Modal.propTypes = {
   className: PropTypes.string.isRequired,
@@ -11,7 +12,7 @@ Modal.propTypes = {
 
 function Modal({ className, show, closeModal, children }) {
   return (
-    <div className={className} show={show}>
+    <div className={className}>
       <Backdrop show={show} clicked={closeModal} />
       <section>{children}</section>
     </div>
@@ -35,11 +36,12 @@ export default styled(Modal)`
       transition: transform 0.3s ease-in-out;
       background: var(--cl-light);
       z-index: var(--z-modal);
-      padding: 2em 1em;
+      padding: 3em 1em 2em;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      ${shadow}
     }
   `}
 `;

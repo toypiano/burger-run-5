@@ -51,10 +51,18 @@ function BurgerBuilder({ className }) {
     setIsOrdering(false);
   };
 
+  const continueOrder = () => {
+    alert('Order continued!');
+  };
+
   return (
     <div className={className}>
       <Modal show={isOrdering} closeModal={cancelOrder}>
-        <OrderSummary ingredients={ingredients} />
+        <OrderSummary
+          ingredients={ingredients}
+          continueOrder={continueOrder}
+          cancelOrder={cancelOrder}
+        />
       </Modal>
       <Burger ingredients={ingredients} />
       <BuildControls

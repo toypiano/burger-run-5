@@ -2,7 +2,10 @@
   --cl-primary: #cc8b29;
   --cl-secondary: #8f5e1e;
   --cl-light: #fff;
+  --cl-dark: hsla(0, 0%, 0%, 1);
   --cl-accent: #dad735;
+  --cl-success: #396f3a;
+  --cl-danger: #bf3813;
 
   --fz-h2: 1.5em;
 
@@ -41,4 +44,16 @@ button {
   font: inherit;
   border: none;
   cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+ul {
+  margin: 0;
 }
