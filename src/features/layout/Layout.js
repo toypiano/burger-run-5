@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import Navbar from './Navbar';
+import DrawerToggle from './DrawerToggle';
 
 Layout.propTypes = {
   className: PropTypes.string.isRequired,
@@ -9,7 +11,7 @@ Layout.propTypes = {
 function Layout({ className, children }) {
   return (
     <div className={className}>
-      <div>Toolbar, SideBar, Backdrop</div>
+      <Navbar />
       <main>{children}</main>
     </div>
   );
@@ -18,7 +20,7 @@ function Layout({ className, children }) {
 export default styled(Layout)`
   ${(props) => css`
     main {
-      margin-top: 1em;
+      margin-top: var(--h-navbar);
     }
   `}
 `;
