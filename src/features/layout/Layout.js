@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Navbar from './Navbar';
-import DrawerToggle from './DrawerToggle';
+import SideDrawer from './SideDrawer';
 
 Layout.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
 function Layout({ className, children }) {
+  const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   return (
     <div className={className}>
-      <Navbar />
+      <Navbar openSideDrawer={() => setIsSideDrawerOpen(true)} />
+      <SideDrawer
+        isOpen={isSideDrawerOpen}
+        closeSideDrawer={() => setIsSideDrawerOpen(false)}
+      />
       <main>{children}</main>
     </div>
   );

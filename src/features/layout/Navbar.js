@@ -1,18 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { media } from '../../common/utils/styles-utils';
+
 import { ReactComponent as Logo } from '../../common/images/a-w.svg';
 import DrawerToggle from './DrawerToggle';
+import NavItems from './NavItems';
 
 Navbar.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function Navbar({ className }) {
+function Navbar({ className, openSideDrawer }) {
   return (
     <div className={className}>
-      <DrawerToggle />
+      <DrawerToggle clicked={openSideDrawer} />
       <Logo className="logo" />
+      <NavItems desktopOnly />
     </div>
   );
 }
@@ -29,6 +33,9 @@ export default styled(Navbar)`
     color: var(--cl-light);
     display: flex;
     justify-content: space-between;
+    ${media.xl`
+      justify-content: space-around;
+    `}
     align-items: center;
     z-index: var(--z-navbar);
     .logo {

@@ -35,3 +35,23 @@
         "description": "Creates a quick styled component"
     }
 ```
+
+## Mixin with `styled-components/css`
+
+```js
+import { css } from 'styled-components';
+
+export const media = {
+  sm: (...args) => css`
+    @media (min-width: 500px) {
+      ${css(...args)}
+    }
+  `,
+};
+
+const Card = styled.div`
+  ${media.sm`
+    /* media query rules... */
+    `}
+`;
+```

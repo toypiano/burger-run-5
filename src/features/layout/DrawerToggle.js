@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { media } from '../../common/utils/styles-utils';
 
 DrawerToggle.propTypes = {
   className: PropTypes.string.isRequired,
@@ -18,6 +19,9 @@ export default styled(DrawerToggle)`
   ${(props) => css`
     height: 100%;
     display: flex;
+    ${media.sm`
+        display: none;      
+      `}
     flex-direction: column;
     justify-content: center;
     .hamburger {

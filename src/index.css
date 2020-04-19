@@ -1,11 +1,16 @@
+@import url('https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900&display=swap');
+
 :root {
   --cl-primary: #cc8b29;
   --cl-secondary: #774319;
   --cl-light: #fff;
   --cl-dark: hsla(0, 0%, 0%, 1);
-  --cl-accent: #dad735;
+  --cl-accent: #f0c33d;
   --cl-success: #396f3a;
   --cl-danger: #bf3813;
+
+  --ff-s: 'Playfair Display', serif;
+  --ff-ss: Roboto, sans-serif;
 
   --fz-h2: 1.5em;
 
@@ -15,8 +20,9 @@
 
   --z-backdrop: 100;
   --z-modal: 200;
-  --z-navbar: 50;
+  --z-side-drawer: 150;
 
+  --z-navbar: 50;
   --h-navbar: 3.75rem;
 }
 
@@ -59,4 +65,8 @@ p {
 
 ul {
   margin: 0;
+}
+
+a {
+  text-decoration: none;
 }
