@@ -11,7 +11,7 @@ Modal.propTypes = {
 };
 
 function Modal({ className, show, closeModal, children }) {
-  console.log('Modal rendered!');
+  // console.log('Modal rendered!'); // check if it's memoized
   return (
     <div className={className}>
       <Backdrop show={show} clicked={closeModal} />
