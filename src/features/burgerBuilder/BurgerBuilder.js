@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import axios from '../../common/axios-orders';
+
 import * as mock from '../../common/mock';
 
 import Burger from './burger/Burger';
 import BuildControls from './burger/BuildControls';
 import Modal from '../../common/ui/Modal';
 import OrderSummary from './burger/OrderSummary';
+import Spinner from '../../common/ui/Spinner';
 
 BurgerBuilder.propTypes = {
   className: PropTypes.string.isRequired,
@@ -33,6 +36,7 @@ function BurgerBuilder({ className }) {
   const [ingredients, setIngredients] = useState({ ...mock.ingredients });
   const [price, setPrice] = useState(BASE_PRICE);
   const [isOrdering, setIsOrdering] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const addIngredient = (ing) => {
     setIngredients({ ...ingredients, [ing]: ingredients[ing] + 1 });
@@ -51,19 +55,49 @@ function BurgerBuilder({ className }) {
     setIsOrdering(false);
   };
 
-  const continueOrder = () => {
-    alert('Order continued!');
+  const continueOrder = async () => {
+    const order = {
+      ingredients,
+      price,
+      customer: {
+        name: 'Elaine',
+        address: {
+          street: 'test',
+          zipCode: '123',
+          country: 'Canada',
+        },
+        email: 'test@test.com',
+      },
+      deliveryMethod: 'fastest',
+    };
+    try {
+      setIsLoading(true);
+      const response = await axios.post('/orders.json', order);
+      setIsLoading(false);
+      setIsOrdering(false);
+      console.log(response);
+    } catch (err) {
+      setIsLoading(false);
+      setIsOrdering(false);
+      console.error(err);
+    }
   };
+
+  const modal = isLoading ? (
+    <Spinner />
+  ) : (
+    <Modal show={isOrdering} closeModal={cancelOrder}>
+      <OrderSummary
+        ingredients={ingredients}
+        continueOrder={continueOrder}
+        cancelOrder={cancelOrder}
+      />
+    </Modal>
+  );
 
   return (
     <div className={className}>
-      <Modal show={isOrdering} closeModal={cancelOrder}>
-        <OrderSummary
-          ingredients={ingredients}
-          continueOrder={continueOrder}
-          cancelOrder={cancelOrder}
-        />
-      </Modal>
+      {modal}
       <Burger ingredients={ingredients} />
       <BuildControls
         price={price}

@@ -21,7 +21,7 @@
   --z-backdrop: 100;
   --z-modal: 200;
   --z-side-drawer: 150;
-
+  --z-spinner: 500;
   --z-navbar: 50;
   --h-navbar: 3.75rem;
 }

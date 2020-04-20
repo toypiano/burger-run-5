@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 Backdrop.propTypes = {
   className: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
-  clicked: PropTypes.func.isRequired,
+  clicked: PropTypes.func,
 };
 
 function Backdrop({ className, clicked, show }) {
