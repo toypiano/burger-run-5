@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import axios from '../../common/axios-orders';
 
+import withErrorHandler from '../../common/hoc/withErrorHandler';
+
 import * as mock from '../../common/mock';
 
 import Burger from './burger/Burger';
@@ -112,8 +114,10 @@ function BurgerBuilder({ className }) {
   );
 }
 
-export default styled(BurgerBuilder)`
+const StyledBurgerBuilder = styled(BurgerBuilder)`
   ${(props) => css`
     width: 100vw;
   `}
 `;
+
+export default withErrorHandler(StyledBurgerBuilder, axios);

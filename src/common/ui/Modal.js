@@ -7,7 +7,7 @@ import { shadow } from '../css';
 Modal.propTypes = {
   className: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
-  closeModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func,
 };
 
 function Modal({ className, show, closeModal, children }) {
@@ -46,7 +46,7 @@ export default React.memo(
         transition: transform 0.3s ease-in-out;
         background: var(--cl-light);
         z-index: var(--z-modal);
-        padding: 3em 1em 2em;
+        padding: 2em 1em;
         display: flex;
         flex-direction: column;
         align-items: center;
