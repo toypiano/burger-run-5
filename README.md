@@ -55,3 +55,27 @@ const Card = styled.div`
     `}
 `;
 ```
+
+## React-Router: `<Route>`
+
+- `Route` can only pass route props (match, location, history) to functions.
+  Route uses `React.createElement` to create a new react element from the given component (which is a function returning a JSX Element (object))
+  This means:
+  ```jsx
+  <Route path="/" exact component={BurgerBuilder}>
+  ```
+  instead of:
+  ```jsx
+  <Route path="/" exact component={<BurgerBuilder/>}>
+  ```
+  because
+  ```jsx
+  <Component>
+  // is the same as:
+  React.createElement(Component, null)
+  ```
+  If you do:
+  ```jsx
+  <Route path="/" exact component={() => <BurgerBuilder />} />
+  ```
+  This will create new instance of BurgerBuilder component resulting in un-mounting and re-mounting every time you're routed to that "page".

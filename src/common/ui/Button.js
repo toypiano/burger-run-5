@@ -23,7 +23,7 @@ const getButtonVariant = (variant) => {
 export default styled.button`
   display: block;
   text-transform: uppercase;
-  padding: 0.5em 1.5em;
+  padding: 0.75em 1.5em;
   font-weight: var(--fw-bold);
   border-radius: 5px;
   margin: 0.3em;

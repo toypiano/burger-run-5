@@ -34,7 +34,7 @@ const getPurchasable = (ingredients) => {
   return totalQty > 0;
 };
 
-function BurgerBuilder({ className }) {
+function BurgerBuilder({ className, ...props }) {
   const [ingredients, setIngredients] = useState({ ...mock.ingredients });
   const [price, setPrice] = useState(BASE_PRICE);
   const [isOrdering, setIsOrdering] = useState(false);
@@ -58,31 +58,32 @@ function BurgerBuilder({ className }) {
   };
 
   const continueOrder = async () => {
-    const order = {
-      ingredients,
-      price,
-      customer: {
-        name: 'Elaine',
-        address: {
-          street: 'test',
-          zipCode: '123',
-          country: 'Canada',
-        },
-        email: 'test@test.com',
-      },
-      deliveryMethod: 'fastest',
-    };
-    try {
-      setIsLoading(true);
-      const response = await axios.post('/orders.json', order);
-      setIsLoading(false);
-      setIsOrdering(false);
-      console.log(response);
-    } catch (err) {
-      setIsLoading(false);
-      setIsOrdering(false);
-      console.error(err);
-    }
+    // const order = {
+    //   ingredients,
+    //   price,
+    //   customer: {
+    //     name: 'Elaine',
+    //     address: {
+    //       street: 'test',
+    //       zipCode: '123',
+    //       country: 'Canada',
+    //     },
+    //     email: 'test@test.com',
+    //   },
+    //   deliveryMethod: 'fastest',
+    // };
+    // try {
+    //   setIsLoading(true);
+    //   const response = await axios.post('/orders.json', order);
+    //   setIsLoading(false);
+    //   setIsOrdering(false);
+    //   console.log(response);
+    // } catch (err) {
+    //   setIsLoading(false);
+    //   setIsOrdering(false);
+    //   console.error(err);
+    // }
+    props.history.push('/checkout');
   };
 
   const modal = isLoading ? (
