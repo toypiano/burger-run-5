@@ -83,7 +83,14 @@ function BurgerBuilder({ className, ...props }) {
     //   setIsOrdering(false);
     //   console.error(err);
     // }
-    props.history.push('/checkout');
+    const searchParam = Object.entries(ingredients)
+      .map(([ing, qty]) => `${ing}=${qty}`)
+      .join('&');
+
+    props.history.push({
+      pathname: '/checkout',
+      search: '?' + searchParam,
+    });
   };
 
   const modal = isLoading ? (
