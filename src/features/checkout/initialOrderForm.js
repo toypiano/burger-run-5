@@ -7,6 +7,11 @@ export default {
       placeholder: 'John Doe',
     },
     value: '',
+    validation: {
+      required: true,
+    },
+    touched: false,
+    valid: false,
   },
   street: {
     inputType: 'input',
@@ -16,6 +21,11 @@ export default {
       placeholder: 'John Doe',
     },
     value: '',
+    validation: {
+      required: true,
+    },
+    touched: false,
+    valid: false,
   },
   zipCode: {
     inputType: 'input',
@@ -25,6 +35,14 @@ export default {
       placeholder: '5-digit zip code(ex. 12345)',
     },
     value: '',
+    validation: {
+      required: true,
+      isNumeric: true,
+      minLength: 5,
+      maxLength: 5,
+    },
+    touched: false,
+    valid: false,
   },
   country: {
     inputType: 'input',
@@ -34,6 +52,11 @@ export default {
       placeholder: 'Wakanda',
     },
     value: '',
+    validation: {
+      required: true,
+    },
+    touched: false,
+    valid: false,
   },
   email: {
     inputType: 'input',
@@ -43,6 +66,12 @@ export default {
       placeholder: 'johndoe@youremail.com',
     },
     value: '',
+    validation: {
+      required: true,
+      isEmail: true,
+    },
+    touched: false,
+    valid: false,
   },
   deliveryMethod: {
     inputType: 'select',
@@ -55,5 +84,8 @@ export default {
       ],
     },
     value: '',
+    validation: {},
+    touched: false,
+    valid: false,
   },
 };

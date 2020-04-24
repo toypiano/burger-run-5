@@ -13,21 +13,47 @@ const StyledInput = styled.div`
   display: block;
   font: inherit;
   font-size: 1.2rem;
-  border: 1px solid var(--cl-gray);
+  border: ${(props) =>
+    !props.valid && props.touched
+      ? '2px solid red'
+      : '1px solid var(--cl-gray)'};
+
   border-radius: 8px;
   padding: 0.5em 1em;
   width: 100%;
 `;
 
-const Input = ({ inputType, config }) => {
+const Input = ({ inputType, config, valid, touched, onChange }) => {
   switch (inputType) {
     case 'input':
-      return <StyledInput as="input" {...config} />;
+      return (
+        <StyledInput
+          as="input"
+          {...config}
+          valid={valid}
+          touched={touched}
+          onChange={onChange}
+        />
+      );
     case 'textarea':
-      return <StyledInput as="textarea" {...config} />;
+      return (
+        <StyledInput
+          as="textarea"
+          {...config}
+          valid={valid}
+          touched={touched}
+          onChange={onChange}
+        />
+      );
     case 'select':
       return (
-        <StyledInput as="select" defaultValue="">
+        <StyledInput
+          as="select"
+          defaultValue=""
+          valid={valid}
+          touched={touched}
+          onChange={onChange}
+        >
           {config.options.map((option) =>
             option.value ? (
               <option key={option.displayValue} value={option.value}>
@@ -52,15 +78,17 @@ const Input = ({ inputType, config }) => {
   }
 };
 
-function InputGroup({ inputType, config, value, onChange }) {
+function InputGroup({ inputType, config, value, onChange, valid, touched }) {
   return (
     <StyledInputGroup>
       <label>{config.label}</label>
       <Input
-        value={config.value}
+        value={value}
         onChange={onChange}
         config={config}
         inputType={inputType}
+        valid={valid}
+        touched={touched}
       />
     </StyledInputGroup>
   );

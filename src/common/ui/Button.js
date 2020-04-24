@@ -38,4 +38,12 @@ export default styled.button`
     top: 1px;
     filter: brightness(0.9);
   }
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &:disabled:hover {
+    filter: none;
+    cursor: not-allowed;
+  }
 `;
