@@ -12,8 +12,10 @@ NavItems.propTypes = {
 function NavItems({ className }) {
   return (
     <ul className={className}>
-      <NavItem>Burger Builder</NavItem>
-      <NavItem>Checkout</NavItem>
+      <NavItem linkTo="/" exact>
+        Burger Builder
+      </NavItem>
+      <NavItem linkTo="/orders">Orders</NavItem>
     </ul>
   );
 }

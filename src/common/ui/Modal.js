@@ -37,7 +37,7 @@ export default React.memo(
       section {
         position: fixed;
         width: 80%;
-        max-width: 500px;
+        max-width: var(--mw-modal);
         min-height: 10em;
         border-radius: 0.5em;
         top: 30%;

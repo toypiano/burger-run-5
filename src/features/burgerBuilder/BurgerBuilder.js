@@ -11,7 +11,6 @@ import Burger from './burger/Burger';
 import BuildControls from './burger/BuildControls';
 import Modal from '../../common/ui/Modal';
 import OrderSummary from './burger/OrderSummary';
-import Spinner from '../../common/ui/Spinner';
 
 BurgerBuilder.propTypes = {
   className: PropTypes.string.isRequired,
@@ -38,7 +37,7 @@ function BurgerBuilder({ className, ...props }) {
   const [ingredients, setIngredients] = useState({ ...mock.ingredients });
   const [price, setPrice] = useState(BASE_PRICE);
   const [isOrdering, setIsOrdering] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const addIngredient = (ing) => {
     setIngredients({ ...ingredients, [ing]: ingredients[ing] + 1 });
@@ -89,13 +88,11 @@ function BurgerBuilder({ className, ...props }) {
 
     props.history.push({
       pathname: '/checkout',
-      search: '?' + searchParam,
+      search: '?' + searchParam + `&price=${price}`,
     });
   };
 
-  const modal = isLoading ? (
-    <Spinner />
-  ) : (
+  const modal = (
     <Modal show={isOrdering} closeModal={cancelOrder}>
       <OrderSummary
         ingredients={ingredients}

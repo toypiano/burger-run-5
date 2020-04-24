@@ -4,6 +4,9 @@
   --cl-primary: #cc8b29;
   --cl-secondary: #774319;
   --cl-light: #fff;
+  --cl-gray-dark: #bbb;
+  --cl-gray: #ccc;
+  --cl-gray-light: #eee;
   --cl-dark: hsla(0, 0%, 0%, 1);
   --cl-accent: #f0c33d;
   --cl-success: #396f3a;
@@ -23,7 +26,10 @@
   --z-side-drawer: 150;
   --z-spinner: 500;
   --z-navbar: 50;
+  --z-orders: -10;
+
   --h-navbar: 3.75rem;
+  --mw-modal: 450px;
 }
 
 html {

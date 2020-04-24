@@ -1,16 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { NavLink } from 'react-router-dom';
+
 import { media } from '../../common/utils/styles-utils';
 
 NavItem.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function NavItem({ className, linkTo, children }) {
+function NavItem({ className, linkTo, exact, children }) {
   return (
     <li className={className}>
-      <a href={linkTo}>{children}</a>
+      <NavLink className="navLink" to={linkTo} exact={exact}>
+        {children}
+      </NavLink>
     </li>
   );
 }
@@ -21,18 +25,21 @@ export default styled(NavItem)`
     flex: 1 1 auto;
     width: 100%;
     display: flex;
-    a {
+    .navLink {
+      text-decoration: none;
+      color: var(--cl-dark);
       cursor: pointer;
       flex-basis: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: background-color 250ms ease;
-      &:hover,
-      &:focus {
-        background: rgba(0, 0, 0, 0.35);
+      &:hover {
         color: var(--cl-light);
-        transition: none;
+      }
+      &:focus,
+      &.active {
+        color: var(--cl-light);
+        background: rgba(0, 0, 0, 0.35);
       }
       &:active {
         background: rgba(0, 0, 0, 0.15);
@@ -46,8 +53,9 @@ export default styled(NavItem)`
       flex-item's width: 100%; will make the width of itself: min-width; 
       */
       width: auto; 
-      a {
+      .navLink {
        padding: 1em 1em;
+       color: var(--cl-accent);
       }
     `}
   `}
