@@ -39,7 +39,7 @@ export default styled(Order)`
       span {
         text-transform: capitalize;
         opacity: 0.9;
-        margin: 0 0.5em 0.5em 0;
+        margin: 0.5em;
         border: 1px solid var(--cl-gray);
         border-radius: 100vmax;
         padding: 0 0.5em;
