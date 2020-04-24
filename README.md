@@ -36,46 +36,28 @@
     }
 ```
 
-- `use-immer`
+- `useImmer`
 
 ```ts
-import React from 'react';
-import { useImmer } from 'use-immer';
+import { useState } from 'react';
+import produce from 'immer';
 
-function App() {
-  const [person, updatePerson] = useImmer({
-    name: 'Michel',
-    age: 33,
-  });
-
-  function updateName(name) {
-    updatePerson((draft) => {
-      draft.name = name;
-    });
-  }
-
-  function becomeOlder() {
-    updatePerson((draft) => {
-      draft.age++;
-    });
-  }
-
-  return (
-    <div className="App">
-      <h1>
-        Hello {person.name} ({person.age})
-      </h1>
-      <input
-        onChange={(e) => {
-          updateName(e.target.value);
-        }}
-        value={person.name}
-      />
-      <br />
-      <button onClick={becomeOlder}>Older</button>
-    </div>
-  );
+export default function useImmer(initialState) {
+  const [state, setState] = useState(initialState);
+  const updateState = (draftUpdater) => {
+    const updatedState = produce(state, draftUpdater);
+    setState(updatedState);
+  };
+  return [state, updateState];
 }
+
+...
+const isValid = validateInputValue(value, orderForm[inputField].validation);
+updateOrderForm((draft) => {
+  draft[inputField].value = value;
+  draft[inputField].touched = true;
+  draft[inputField].valid = isValid;
+});
 ```
 
 ## Mixin with `styled-components/css`
@@ -122,7 +104,7 @@ const Card = styled.div`
   ```
   This will create new instance of BurgerBuilder component resulting in un-mounting and re-mounting every time you're routed to that "page".
 
-## React-Router `history` vs `location
+## React-Router `history` vs `location`
 
 ### history
 
@@ -218,3 +200,5 @@ useEffect runs after the component "renders(returns React Element)" and DOM has 
 5. Because the effect updates the state, React re-renders the component to reflect the changes in states. useEffect will not run until the specified dependencies are changed (which will happen with another `change` event)
 
 Finally, both the updated state from the event handler and the updated state from the useEffect are synchronized
+
+<img src="./useEffect_eventHandler.png"/>
