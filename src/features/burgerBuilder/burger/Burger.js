@@ -30,17 +30,14 @@ function Burger({ className, ingredients }) {
 export default styled(Burger)`
   ${(props) => css`
     position: relative;
-    width: 90%;
+    width: 100%;
     max-width: 450px;
-    height: 300px;
+    height: 100%;
+    max-height: 450px;
     margin: 0.8em auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    @media (min-width: 500px) {
-      width: 450px;
-      height: 350px;
-    }
   `}
 `;

@@ -105,7 +105,9 @@ function BurgerBuilder({ className, ...props }) {
   return (
     <div className={className}>
       {modal}
-      <Burger ingredients={ingredients} />
+      <div className="burger-container">
+        <Burger ingredients={ingredients} />
+      </div>
       <BuildControls
         price={price}
         controlItems={controlItems}
@@ -122,6 +124,13 @@ function BurgerBuilder({ className, ...props }) {
 const StyledBurgerBuilder = styled(BurgerBuilder)`
   ${(props) => css`
     width: 100vw;
+    .burger-container {
+      margin: 0 auto;
+      width: 50vh;
+      max-width: 90%;
+      height: 40vh;
+      max-height: 350px;
+    }
   `}
 `;
 

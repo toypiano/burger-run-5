@@ -10,6 +10,14 @@ CheckoutSummary.propTypes = {
   continueCheckout: PropTypes.func.isRequired,
 };
 
+const Wrapper = styled.div`
+  margin: 0 auto;
+  width: 50vw;
+  max-width: 90%;
+  height: 40vw;
+  max-height: 350px;
+`;
+
 function CheckoutSummary({
   className,
   ingredients,
@@ -21,7 +29,9 @@ function CheckoutSummary({
       <h2>
         Your burger is <span>ready for order</span>!
       </h2>
-      <Burger ingredients={ingredients} />
+      <Wrapper>
+        <Burger ingredients={ingredients} />
+      </Wrapper>
       <div className="buttons">
         <Button variant="danger" onClick={cancelCheckout}>
           Cancel
@@ -37,7 +47,7 @@ function CheckoutSummary({
 export default styled(CheckoutSummary)`
   ${(props) => css`
     text-align: center;
-    padding: 3em 0;
+    padding: 3em 0 1em;
     h2 {
       font-weight: var(--fw-normal);
       opacity: 0.7;
