@@ -4,7 +4,7 @@
 
 - Functional components only
 - VSCode snippet for styled-components + react
-  - (gist)[https://gist.github.com/toypiano/6ac3f3f230cf0a87e179401652d578e1]
+  - [gist](https://gist.github.com/toypiano/6ac3f3f230cf0a87e179401652d578e1)
 - `useImmer`
 
 ```ts
