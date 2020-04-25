@@ -14,24 +14,18 @@ ContactData.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-let counter = 0;
-
 function ContactData({ className, ingredients, price, history }) {
   // rendering starts
-  console.log('render', ++counter);
-
   const [isLoading, setIsLoading] = useState(false);
   const [orderForm, updateOrderForm] = useImmer(initialOrderForm);
   const [isFormValid, setIsFormValid] = useState(false);
 
   // effect function will run after ContactData return + DOM update
   useEffect(() => {
-    console.log('effect', counter);
     const isFormValid = Object.keys(orderForm).reduce(
       (isValid, field) => isValid && orderForm[field].valid,
       true
     );
-    console.log('isFormValid:', isFormValid);
     setIsFormValid(isFormValid); // this will trigger re-render
   }, [orderForm]); // will run whenever orderForm is updated.
 
@@ -39,10 +33,14 @@ function ContactData({ className, ingredients, price, history }) {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    const formData = Object.keys(orderForm).reduce((data, inputField) => {
+      data[inputField] = orderForm[inputField].value;
+      return data;
+    }, {});
     const order = {
       ingredients,
       price,
-      customer: { ...orderForm.customer },
+      customer: formData,
       deliveryMethod: 'fastest',
     };
     // post order information
@@ -58,7 +56,6 @@ function ContactData({ className, ingredients, price, history }) {
   };
 
   const handleInputChange = (value, inputField) => {
-    console.log('change', counter);
     const isValid = validateInputValue(value, orderForm[inputField].validation);
     updateOrderForm((draft) => {
       draft[inputField].value = value;
@@ -83,7 +80,7 @@ function ContactData({ className, ingredients, price, history }) {
       valid={o.valid}
     />
   ));
-  console.log('function end');
+
   return (
     <>
       {isLoading ? <Spinner show={isLoading} /> : null}
@@ -107,6 +104,7 @@ function ContactData({ className, ingredients, price, history }) {
 export default styled(ContactData)`
   ${(props) => css`
     width: 80%;
+    max-width: 500px;
     margin: 0 auto;
     h2 {
       text-align: center;
