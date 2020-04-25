@@ -138,37 +138,59 @@ const Card = styled.div`
 
 ```ts
 const handleInputChange = (value, inputField) => {
+  // get state and run through a function
   const isValid = validateInputValue(value, orderForm[inputField].validation);
+  // set state with return value
   updateOrderForm((draft) => {
     draft[inputField].value = value;
     draft[inputField].touched = true;
     draft[inputField].valid = isValid;
   });
-
+  // get state and process
   const isFormValid = Object.keys(orderForm).reduce(
     (isValid, field) => isValid && orderForm[field].valid,
     true
   );
-  console.log(isFormValid);
+  // set state with the result
   setIsFormValid(isFormValid);
 };
 ```
 
-1. Finished filling in the form with valid input.
-2. `isValid` becomes true.
+1. The User just finished filling in the form with valid input.
+2. `isValid` evaluates to true.
 3. State will be updated from `updateOrderForm` **in the next re-render**
-4. `isFormValid` is updated to be `false` because orderForm state is not updated yet. React re-renders component from state update, now all fields are valid but `isFormValid` is `false`.
-5. User has to change input values to trigger `handleInputChange` again. If the user changes some field but the value is still valid, `isValid` stays as true, but now `isFormValid` is updated to be true. React renders again, now everything looks good.
-6. Let's go back and suppose that the user removed the last digit from the zip code, making it invalid.
-7. `isValid` is `false` and UI emits invalid reaction.
-8. `updateOrderForm` will update the state reflecting this `false` valid state **in the next re-render**.
-9. However, `isFormValid` is now `true` because all the input field validated to true in the current render, reflecting the change from the last render.
-10. React renders again, now the zip code has the invalid state, but the form is validated to be true.
+4. `isFormValid` evaluates to`false` because orderForm state is not updated yet. React re-renders component ,triggered by state update. Now all input fields are valid but `isFormValid` is `false`.
+5. User changes one of the input values to trigger `handleInputChange` again. If the user changes some field but the value is still valid, `isValid` stays as true, but now `isFormValid` is updated to be true. React renders again, now everything looks good.
+6. Let's go back and suppose that the user removed the last digit from the zip code. changeHandler sets `isValid` to false, triggering re-render.
+7. In the new render, `isValid` is `false` and UI emits invalid reaction.
+8. `updateOrderForm` will update the state reflecting this `false` valid state **when changeHandler is called**.
+9. However, `isFormValid` is now `true` because all the input field has the state of true in the current render, reflecting the change from the last render.
+10. Now one of the input field has the invalid state, but the form is validated to be true. 🤷🏻‍♂️🤷🏻‍♀️🐕💩
 
 ### The Problem:
 
-- You are updating multiple states that are dependant on one another in one place. It can be hard to synchronize them together because state A gets updated in next render, but B's fate is already sealed with the A's current state.
-- The real problem is that A's state can again, be "planned" to change based on the new `change` event but B's state is planned to change based on current A
+- You are updating multiple states that are dependant on one another in one place. It is difficult to synchronize them together because state A gets updated in next render, but B's fate is already sealed with the A's current state.
+- The real problem is that A's state is "planned" to change based on the new `change` event but B's state is planned to change based on current A
+- What you want is to change the state of A and then change the state of B based on A's updated state.
+- It might have been easier to spot the error if you get pieces of state and process them in one place and set all the state with the results in the other place.
+
+```ts
+const handleInputChange = (value, inputField) => {
+  // get state & process
+  const isValid = validateInputValue(value, orderForm[inputField].validation);
+  const isFormValid = Object.keys(orderForm).reduce(
+    (isValid, field) => isValid && orderForm[field].valid,
+    true // this depends on the updated isValid, therefore should be done in next render.
+  );
+  // set state
+  updateOrderForm((draft) => {
+    draft[inputField].value = value;
+    draft[inputField].touched = true;
+    draft[inputField].valid = isValid;
+  });
+  setIsFormValid(isFormValid);
+};
+```
 
 ### Solution
 
@@ -191,6 +213,8 @@ const handleInputChange = (value, inputField) => {
   });
 };
 ```
+
+## Use `useEffect` for updating related states in one transaction
 
 useEffect runs after the component "renders(returns React Element)" and DOM has been updated.
 
@@ -238,6 +262,7 @@ useEffect runs after the component "renders(returns React Element)" and DOM has 
 ## Render, Mount & Update
 
 `Render` is the **process** from the beginning of the function block to the function return (inclusive).
+
 `Mounting` & `updating` are the **point in time** when React takes the return from render and put it in the DOM.
 
 ```jsx
