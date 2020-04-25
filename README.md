@@ -201,4 +201,4 @@ useEffect runs after the component "renders(returns React Element)" and DOM has 
 
 Finally, both the updated state from the event handler and the updated state from the useEffect are synchronized
 
-<img src="./useEffect_eventHandler.png"/>
+<img src="./useEffect_eventHandler.png" width="500"/>
