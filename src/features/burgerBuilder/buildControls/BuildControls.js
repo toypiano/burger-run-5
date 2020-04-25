@@ -18,6 +18,7 @@ function BuildControls({
   addIngredient,
   removeIngredient,
   beginOrder,
+  fetchError,
 }) {
   return (
     <div className={className}>
@@ -31,9 +32,10 @@ function BuildControls({
           add={() => addIngredient(item)}
           remove={() => removeIngredient(item)}
           disabled={ingredients[item] <= 0}
+          error={fetchError}
         />
       ))}
-      <OrderButton disabled={!isPurchasable} clicked={beginOrder}>
+      <OrderButton disabled={!isPurchasable || fetchError} clicked={beginOrder}>
         Order Now
       </OrderButton>
     </div>

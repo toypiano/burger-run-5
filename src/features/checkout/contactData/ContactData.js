@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import axios from '../../common/axios-orders';
+import axios from '../../../common/axios-orders';
 
-import Button from '../../common/ui/Button';
-import Spinner from '../../common/ui/Spinner';
-import InputGroup from '../../common/ui/InputGroup';
-import useImmer from '../../common/hooks/useImmer';
+import Button from '../../../common/ui/Button';
+import Spinner from '../../../common/ui/Spinner';
+import InputGroup from '../../../common/ui/InputGroup';
+import useImmer from '../../../common/hooks/useImmer';
 import initialOrderForm from './initialOrderForm';
-import { validateInputValue } from '../../common/validation/inputValidation';
+import { validateInputValue } from '../../../common/validation/inputValidation';
 
 ContactData.propTypes = {
   className: PropTypes.string.isRequired,

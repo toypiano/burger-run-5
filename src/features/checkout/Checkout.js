@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { Route } from 'react-router-dom';
 
 import CheckoutSummary from './CheckoutSummary';
-import ContactData from './ContactData';
+import ContactData from './contactData/ContactData';
 import withErrorHandler from '../../common/hoc/withErrorHandler';
 import axios from '../../common/axios-orders';
 

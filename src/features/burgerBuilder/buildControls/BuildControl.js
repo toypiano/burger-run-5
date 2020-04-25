@@ -46,14 +46,14 @@ const StyledButton = styled.button`
   }
 `;
 
-function BuildControl({ className, label, add, remove, disabled }) {
+function BuildControl({ className, label, add, remove, disabled, error }) {
   return (
     <div className={className}>
       <label>{label}</label>
-      <StyledButton type="less" onClick={remove} disabled={disabled}>
+      <StyledButton type="less" onClick={remove} disabled={disabled || error}>
         Less
       </StyledButton>
-      <StyledButton type="more" onClick={add}>
+      <StyledButton type="more" onClick={add} disabled={error}>
         More
       </StyledButton>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import axios from '../../common/axios-orders';
@@ -9,6 +9,7 @@ import Burger from './burger/Burger';
 import BuildControls from './buildControls/BuildControls';
 import Modal from '../../common/ui/Modal';
 import OrderSummary from './OrderSummary';
+import Spinner from '../../common/ui/Spinner';
 
 BurgerBuilder.propTypes = {
   className: PropTypes.string.isRequired,
@@ -31,9 +32,18 @@ function BurgerBuilder({
   price,
   addIngredient,
   removeIngredient,
+  initIngredients,
+  fetchError,
 }) {
   const [isOrdering, setIsOrdering] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [fetchingIngredients, setFetchingIngredients] = useState(false);
+
+  useEffect(() => {
+    setFetchingIngredients(true);
+    initIngredients().then(() => {
+      setFetchingIngredients(false);
+    });
+  }, [initIngredients]);
 
   const beginOrder = () => {
     setIsOrdering(true);
@@ -43,39 +53,7 @@ function BurgerBuilder({
   };
 
   const continueOrder = async () => {
-    // const order = {
-    //   ingredients,
-    //   price,
-    //   customer: {
-    //     name: 'Elaine',
-    //     address: {
-    //       street: 'test',
-    //       zipCode: '123',
-    //       country: 'Canada',
-    //     },
-    //     email: 'test@test.com',
-    //   },
-    //   deliveryMethod: 'fastest',
-    // };
-    // try {
-    //   setIsLoading(true);
-    //   const response = await axios.post('/orders.json', order);
-    //   setIsLoading(false);
-    //   setIsOrdering(false);
-    //   console.log(response);
-    // } catch (err) {
-    //   setIsLoading(false);
-    //   setIsOrdering(false);
-    //   console.error(err);
-    // }
-    const searchParam = Object.entries(ingredients)
-      .map(([ing, qty]) => `${ing}=${qty}`)
-      .join('&');
-
-    history.push({
-      pathname: '/checkout',
-      search: '?' + searchParam + `&price=${price}`,
-    });
+    history.push('/checkout');
   };
 
   const modal = (
@@ -88,11 +66,18 @@ function BurgerBuilder({
     </Modal>
   );
 
+  const fetchErrorMessage = (
+    <div className="errorMessage">
+      Ingredients cannot be loaded from the server.
+    </div>
+  );
+
   return (
     <div className={className}>
+      {fetchingIngredients && <Spinner />}
       {modal}
       <div className="burger-container">
-        <Burger ingredients={ingredients} />
+        {fetchError ? fetchErrorMessage : <Burger ingredients={ingredients} />}
       </div>
       <BuildControls
         price={price}
@@ -102,6 +87,7 @@ function BurgerBuilder({
         removeIngredient={removeIngredient}
         isPurchasable={getPurchasable(ingredients)}
         beginOrder={beginOrder}
+        fetchError={fetchError}
       />
     </div>
   );
@@ -116,6 +102,15 @@ const StyledBurgerBuilder = styled(BurgerBuilder)`
       max-width: 90%;
       height: 40vh;
       max-height: 350px;
+    }
+    .errorMessage {
+      padding: 1em;
+      background: var(--cl-dark);
+      color: var(--cl-light);
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
     }
   `}
 `;
