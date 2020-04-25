@@ -168,6 +168,7 @@ const handleInputChange = (value, inputField) => {
 ### The Problem:
 
 - You are updating multiple states that are dependant on one another in one place. It can be hard to synchronize them together because state A gets updated in next render, but B's fate is already sealed with the A's current state.
+- The real problem is that A's state can again, be "planned" to change based on the new `change` event but B's state is planned to change based on current A
 
 ### Solution
 
@@ -193,12 +194,77 @@ const handleInputChange = (value, inputField) => {
 
 useEffect runs after the component "renders(returns React Element)" and DOM has been updated.
 
-1. React runs the component for the first time and "mount" the component (renders to the DOM).
-2. Component is automatically rendered once more.
-3. When `change` event is fired, the handler from the most recent render runs. Because the handler updates the state, React once again, runs the components to reflect the changes and render them to the DOM.
-4. After the render, effect runs but we are still in the current render scope. useEffect has the access to the states that were just rendered to the DOM.
-5. Because the effect updates the state, React re-renders the component to reflect the changes in states. useEffect will not run until the specified dependencies are changed (which will happen with another `change` event)
+### Render 1
 
-Finally, both the updated state from the event handler and the updated state from the useEffect are synchronized
+- React runs the component for the first time and "mount" the component (renders to the DOM).
+- Effect will run after the mount.
+  - sets `isValid` state based on other states from render 1.
+  - setting new state triggers next render(Render 2).
+
+### Render 2
+
+- State change from Render1 is painted to the DOM.
+  - meaning that the component returns the markup with the new state, and React takes that markup and do its own thing and eventually renders it to the DOM.
+- Now nothing happens until "something" happens.
+  - That something can be user-driven event or async action
+
+### Change event fired
+
+- When `change` event is fired, the handler from the most recent render runs (Render 2).
+  - Now the changeHandler function has access to the state & props from Render 2.
+  - So it updates some state based on other state from Render 2.
+- Because the handler updates the state, React once again, runs the components to reflect the changes and render them to the DOM.
+
+### Render 3
+
+- Component runs and flushes out the markup with new state, out to the DOM
+- Now the effect runs. `useEffect` has the access to the states that were just rendered to the DOM.
+- The effect updates the state, triggers Render 4.
+
+### Render 4
+
+- React re-renders the component to reflect the changes in states.
+- useEffect will not run until the specified dependencies - `orderForm` state - are changed (which will happen with another `change` event)
+- Finally, both the updated state from the event handler and the updated state from the useEffect are synchronized
 
 <img src="./useEffect_eventHandler.png" width="350"/>
+
+## Summary
+
+`setStateA` inside eventHandlers and `setStateB` inside useEffect work as one transaction, resulting in 2 new renders.
+
+- Event -> `setStateA`(eventHandler) -> "render" -> `setStateB`(effect) based on A -> "render"
+
+## Render, Mount & Update
+
+`Render` is the **process** from the beginning of the function block to the function return (inclusive).
+`Mounting` & `updating` are the **point in time** when React takes the return from render and put it in the DOM.
+
+```jsx
+function Clock(props) {
+  // do some things...
+  // (like useState & define handlers...)
+  return (
+    <div>
+      <h1>Hello, world!</h1>
+      <h2>It is {props.date.toLocaleTimeString()}.</h2>
+    </div>
+  );
+}
+
+// converted to class
+
+class Clock extends React.Component {
+  // setting state in constructor and...
+  // define some component (class) methods (usually handler functions)
+  render() {
+    // do some things...
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.props.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```

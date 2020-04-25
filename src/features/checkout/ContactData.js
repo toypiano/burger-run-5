@@ -17,10 +17,14 @@ ContactData.propTypes = {
 let counter = 0;
 
 function ContactData({ className, ingredients, price, history }) {
+  // rendering starts
+  console.log('render', ++counter);
+
   const [isLoading, setIsLoading] = useState(false);
   const [orderForm, updateOrderForm] = useImmer(initialOrderForm);
   const [isFormValid, setIsFormValid] = useState(false);
-  console.log('render', ++counter);
+
+  // effect function will run after ContactData return + DOM update
   useEffect(() => {
     console.log('effect', counter);
     const isFormValid = Object.keys(orderForm).reduce(
@@ -28,10 +32,10 @@ function ContactData({ className, ingredients, price, history }) {
       true
     );
     console.log('isFormValid:', isFormValid);
-    setIsFormValid(isFormValid);
+    setIsFormValid(isFormValid); // this will trigger re-render
   }, [orderForm]); // will run whenever orderForm is updated.
 
-  // post order information
+  // only this handler function will run from the latest render scope
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -41,6 +45,7 @@ function ContactData({ className, ingredients, price, history }) {
       customer: { ...orderForm.customer },
       deliveryMethod: 'fastest',
     };
+    // post order information
     try {
       const response = await axios.post('/orders.json', order);
       setIsLoading(false);
