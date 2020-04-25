@@ -52,6 +52,33 @@ const Card = styled.div`
 `;
 ```
 
+## ES6 exporting/importing in index file
+
+[stack overflow](https://stackoverflow.com/questions/34072598/es6-exporting-importing-in-index-file)
+
+- Export reducers (default export) from sibling files.
+
+```js
+// ducks/index.js
+// exported with names
+export { default as burgerBuilder } from './burgerBuilder';
+export { default as orders } from './orders';
+.
+.
+.
+
+// rootReducer.js
+// imported with names
+import * as reducers from './ducks/index';
+// reducers = { burgerBuilder, orders,...}
+```
+
+- Import action creators ( + exported actionTypes) from ducks file.
+
+```js
+import * as burgerBuilderActions from './ducks/burgerBuilder';
+```
+
 ## React-Router: `<Route>`
 
 - `Route` can only pass route props (match, location, history) to functions.
@@ -265,3 +292,5 @@ class Clock extends React.Component {
   }
 }
 ```
+
+- [React: "mount" vs "render" ?](https://reacttraining.com/blog/mount-vs-render/)

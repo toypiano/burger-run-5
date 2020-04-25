@@ -12,11 +12,11 @@ BuildControls.propTypes = {
 function BuildControls({
   className,
   controlItems,
+  ingredients,
   price,
+  isPurchasable,
   addIngredient,
   removeIngredient,
-  ingredients,
-  isPurchasable,
   beginOrder,
 }) {
   return (

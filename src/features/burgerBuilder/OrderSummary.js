@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import Button from '../../../common/ui/Button';
+import Button from '../../common/ui/Button';
 
 OrderSummary.propTypes = {
   className: PropTypes.string.isRequired,

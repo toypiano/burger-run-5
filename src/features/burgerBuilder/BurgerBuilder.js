@@ -5,25 +5,16 @@ import axios from '../../common/axios-orders';
 
 import withErrorHandler from '../../common/hoc/withErrorHandler';
 
-import * as mock from '../../common/mock';
-
 import Burger from './burger/Burger';
-import BuildControls from './burger/BuildControls';
+import BuildControls from './buildControls/BuildControls';
 import Modal from '../../common/ui/Modal';
-import OrderSummary from './burger/OrderSummary';
+import OrderSummary from './OrderSummary';
 
 BurgerBuilder.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
 const controlItems = ['salad', 'bacon', 'cheese', 'beef'];
-const BASE_PRICE = 4.99;
-const INGREDIENT_PRICE = {
-  salad: 0.5,
-  bacon: 0.7,
-  cheese: 0.4,
-  beef: 1.3,
-};
 
 const getPurchasable = (ingredients) => {
   const totalQty = Object.values(ingredients).reduce(
@@ -33,21 +24,16 @@ const getPurchasable = (ingredients) => {
   return totalQty > 0;
 };
 
-function BurgerBuilder({ className, ...props }) {
-  const [ingredients, setIngredients] = useState({ ...mock.ingredients });
-  const [price, setPrice] = useState(BASE_PRICE);
+function BurgerBuilder({
+  className,
+  history,
+  ingredients,
+  price,
+  addIngredient,
+  removeIngredient,
+}) {
   const [isOrdering, setIsOrdering] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
-
-  const addIngredient = (ing) => {
-    setIngredients({ ...ingredients, [ing]: ingredients[ing] + 1 });
-    setPrice((p) => p + INGREDIENT_PRICE[ing]);
-  };
-  const removeIngredient = (ing) => {
-    if (ingredients[ing] <= 0) return;
-    setIngredients({ ...ingredients, [ing]: ingredients[ing] - 1 });
-    setPrice((p) => p - INGREDIENT_PRICE[ing]);
-  };
 
   const beginOrder = () => {
     setIsOrdering(true);
@@ -86,7 +72,7 @@ function BurgerBuilder({ className, ...props }) {
       .map(([ing, qty]) => `${ing}=${qty}`)
       .join('&');
 
-    props.history.push({
+    history.push({
       pathname: '/checkout',
       search: '?' + searchParam + `&price=${price}`,
     });
