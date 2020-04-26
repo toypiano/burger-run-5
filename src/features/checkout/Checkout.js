@@ -13,7 +13,14 @@ Checkout.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-function Checkout({ className, history, match, ingredients, price }) {
+function Checkout({
+  className,
+  history,
+  match,
+  ingredients,
+  price,
+  orderBurger,
+}) {
   const continueCheckout = () => {
     history.replace('/checkout/contact-data');
   };
@@ -35,6 +42,7 @@ function Checkout({ className, history, match, ingredients, price }) {
             price={price}
             ingredients={ingredients}
             history={history}
+            orderBurger={orderBurger}
           />
         )}
       />

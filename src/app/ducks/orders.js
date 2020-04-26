@@ -1,5 +1,6 @@
 import produce from 'immer';
 import axios from '../../common/axios-orders';
+import Axios from 'axios';
 
 // Actions
 const ORDER_SUCCESS = 'checkout/contactData/orderSuccess';
@@ -26,6 +27,31 @@ export default function ordersReducer(state = initialState, action) {
   }
 }
 
+/* 
+response.data = 
+{
+    "-M5dtbghMiWIj2hKBa5c": { // cspell: disable-line
+        "customer": {
+            "address": {
+                "country": "Canada",
+                "street": "Purple creek 777",
+                "zipCode": "12345"
+            },
+            "email": "test@test.com",
+            "name": "Elaine"
+        },
+        "deliveryMethod": "fastest",
+        "ingredients": {
+            "bacon": 1,
+            "beef": 1,
+            "cheese": 1,
+            "salad": 1
+        },
+        "price": 4.99
+    }
+}
+*/
+
 // Action Creators
 export const orderSuccess = (id, order) => ({
   type: ORDER_SUCCESS,
@@ -50,20 +76,38 @@ export const fetchFail = (error) => ({
 });
 
 // Thunks
-export const orderBurger = (order) => async (dispatch) => {
+export const orderBurger = (order, source) => async (dispatch) => {
   try {
-    const response = await axios.post('/orders.json', order);
+    const response = await axios.post('/orders.json', order, {
+      cancelToken: source.token,
+    });
     dispatch(orderSuccess(response.data.name, order));
   } catch (err) {
+    if (Axios.isCancel(err)) {
+      console.log('orderBurger canceled by ContactData unmount');
+      return err;
+    }
     dispatch(orderFail(err, order));
   }
 };
 
-export const fetchOrders = () => async (dispatch) => {
+/**
+ *
+ * @param {Source} source request source from axios.CancelToken.token()
+ */
+export const fetchOrders = (source) => async (dispatch) => {
   try {
-    const response = await axios.get('/orders.json');
+    const response = await axios.get('/orders.json', {
+      cancelToken: source.token,
+    });
     dispatch(fetchSuccess(response.data));
   } catch (err) {
-    dispatch(fetchFail(err));
+    if (Axios.isCancel(err)) {
+      console.log('fetchOrders canceled by effect cleanup in Orders');
+      return err;
+    } else {
+      console.error(err);
+      dispatch(fetchFail(err));
+    }
   }
 };

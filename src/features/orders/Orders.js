@@ -12,68 +12,22 @@ Orders.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-/* 
-{
-    "-M5dtbghMiWIj2hKBa5c": { // cspell: disable-line
-        "customer": {
-            "address": {
-                "country": "Canada",
-                "street": "Purple creek 777",
-                "zipCode": "12345"
-            },
-            "email": "test@test.com",
-            "name": "Elaine"
-        },
-        "deliveryMethod": "fastest",
-        "ingredients": {
-            "bacon": 1,
-            "beef": 1,
-            "cheese": 1,
-            "salad": 1
-        },
-        "price": 4.99
-    }
-}
-*/
-
-/**
- * @returns {Array} [orders, isLoading]
- */
-function useOrders() {
-  const [orders, setOrders] = useState(null);
-  // Fetch orders as soon as we nav to this page
+function Orders({ className, orders, fetchOrders }) {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    const source = Axios.CancelToken.source();
-    axios
-      .get('/orders.json', { cancelToken: source.token })
-      .then((res) => {
-        if (res.data) {
-          const orders = Object.entries(res.data).map(([id, order]) => ({
-            id,
-            ...order,
-          }));
-          setOrders(orders);
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        if (Axios.isCancel(err)) {
-          console.log('fetchOrders canceled');
-        } else {
-          setIsLoading(false);
-          console.error(err);
-        }
-      });
-    return () => {
-      source.cancel();
-    };
-  }, []);
-  return [orders, isLoading];
-}
+    const source = Axios.CancelToken.source(); // get req source
+    (async () => {
+      const thrown = await fetchOrders(source); // call thunked dispatcher with source
+      // stop if request canceled
+      if (!Axios.isCancel(thrown)) {
+        setIsLoading(false); // spinner off when done
+      }
+    })();
 
-function Orders({ className }) {
-  const [orders, isLoading] = useOrders(null);
+    return () => {
+      source.cancel(); // cleanup: cancel req with specified token on unmount
+    };
+  }, [fetchOrders]);
   return (
     <div className={className}>
       {isLoading && <Spinner show={isLoading} />}
@@ -92,13 +46,9 @@ function Orders({ className }) {
 const StyledOrders = styled(Orders)`
   ${(props) => css`
     background: var(--cl-accent);
-    position: absolute;
-    top: var(--h-navbar);
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     z-index: var(--z-orders);
-    padding: 2em 1em;
+    padding: var(--h-navbar) 1em;
   `}
 `;
 

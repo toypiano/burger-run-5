@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import axios from '../../../common/axios-orders';
+import Axios from 'axios';
 
 import Button from '../../../common/ui/Button';
 import Spinner from '../../../common/ui/Spinner';
@@ -9,17 +10,18 @@ import InputGroup from '../../../common/ui/InputGroup';
 import useImmer from '../../../common/hooks/useImmer';
 import initialOrderForm from './initialOrderForm';
 import { validateInputValue } from '../../../common/validation/inputValidation';
+import withErrorHandler from '../../../common/hoc/withErrorHandler';
 
 ContactData.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function ContactData({ className, ingredients, price, history }) {
+function ContactData({ className, ingredients, price, history, orderBurger }) {
   // rendering starts
   const [isLoading, setIsLoading] = useState(false);
   const [orderForm, updateOrderForm] = useImmer(initialOrderForm);
   const [isFormValid, setIsFormValid] = useState(false);
-
+  const source = Axios.CancelToken.source();
   // effect function will run after ContactData return + DOM update
   useEffect(() => {
     const isFormValid = Object.keys(orderForm).reduce(
@@ -27,7 +29,10 @@ function ContactData({ className, ingredients, price, history }) {
       true
     );
     setIsFormValid(isFormValid); // this will trigger re-render
-  }, [orderForm]); // will run whenever orderForm is updated.
+    return () => {
+      source.cancel(); // cancel pending request on component unmount
+    };
+  }, [orderForm, source]); // will run whenever orderForm is updated.
 
   // only this handler function will run from the latest render scope
   const handleFormSubmit = async (e) => {
@@ -43,16 +48,13 @@ function ContactData({ className, ingredients, price, history }) {
       customer: formData,
       deliveryMethod: 'fastest',
     };
-    // post order information
-    try {
-      const response = await axios.post('/orders.json', order);
-      setIsLoading(false);
-      console.log(response);
-      history.push('/');
-    } catch (err) {
-      setIsLoading(false);
-      console.error(err);
-    }
+    (async () => {
+      const thrown = await orderBurger(order, source);
+      if (!Axios.isCancel(thrown)) {
+        setIsLoading(false);
+        history.push('/');
+      }
+    })();
   };
 
   const handleInputChange = (value, inputField) => {
@@ -101,7 +103,7 @@ function ContactData({ className, ingredients, price, history }) {
   );
 }
 
-export default styled(ContactData)`
+const StyledContactData = styled(ContactData)`
   ${(props) => css`
     width: 80%;
     max-width: 500px;
@@ -114,3 +116,5 @@ export default styled(ContactData)`
     }
   `}
 `;
+
+export default withErrorHandler(StyledContactData, axios);

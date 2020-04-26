@@ -394,6 +394,7 @@ useEffect(() => {
     const source = Axios.CancelToken.source();
     axios // pass an option as 2nd arg
       .get('/orders.json', { cancelToken: source.token })
+      // this will run even if request is canceled!!!
       .then((res) => {
         if (res.data) {
           const orders = Object.entries(res.data).map(([id, order]) => ({
@@ -419,7 +420,56 @@ useEffect(() => {
   }, []);
 ```
 
-Read: [Read Hook - Clean Up useEffect](https://dev.to/iquirino/react-hook-clean-up-useeffect-24e7)
+With redux thunk action dispatcher + async await
+`features/orders/Orders`
+
+```js
+useEffect(() => {
+  const source = Axios.CancelToken.source(); // get req source
+  (async () => {
+    const thrown = await fetchOrders(source); // call thunked dispatcher with source
+    // stop if request canceled
+    if (!Axios.isCancel(thrown)) {
+      setIsLoading(false); // spinner off when done
+    }
+  })();
+
+  return () => {
+    source.cancel(); // cleanup: cancel req with specified token on unmount
+  };
+}, [fetchOrders]);
+```
+
+`store/ducks/orders`
+
+```js
+/**
+ *
+ * @param {Source} source request source from axios.CancelToken.token()
+ */
+export const fetchOrders = (source) => async (dispatch) => {
+  try {
+    const response = await axios.get('/orders.json', {
+      cancelToken: source.token,
+    });
+    dispatch(fetchSuccess(response.data));
+  } catch (err) {
+    if (Axios.isCancel(err)) {
+      console.log('fetchOrders canceled by effect cleanup in Orders');
+      return err;
+    } else {
+      console.error(err);
+      dispatch(fetchFail(err));
+    }
+  }
+};
+```
+
+Readings:
+
+- [Read Hook - Clean Up useEffect](https://dev.to/iquirino/react-hook-clean-up-useeffect-24e7)
+
+- [Clean up async requests in useEffect hooks](https://dev.to/pallymore/clean-up-async-requests-in-useeffect-hooks-90h)
 
 ## Noise in the database documents can break your app!
 
