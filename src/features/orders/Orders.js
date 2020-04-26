@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 
+import Axios from 'axios';
 import axios from '../../common/axios-orders';
 import Order from './Order';
 import Spinner from '../../common/ui/Spinner';
+import withErrorHandler from '../../common/hoc/withErrorHandler';
 
 Orders.propTypes = {
   className: PropTypes.string.isRequired,
@@ -42,38 +44,37 @@ function useOrders() {
   // Fetch orders as soon as we nav to this page
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
+    const source = Axios.CancelToken.source();
     axios
-      .get('/orders.json')
+      .get('/orders.json', { cancelToken: source.token })
       .then((res) => {
-        const orders = Object.entries(res.data).map(([id, order]) => ({
-          id,
-          ...order,
-        }));
-        setOrders(orders);
+        if (res.data) {
+          const orders = Object.entries(res.data).map(([id, order]) => ({
+            id,
+            ...order,
+          }));
+          setOrders(orders);
+        }
         setIsLoading(false);
       })
       .catch((err) => {
-        setIsLoading(false);
-        console.error(err);
+        if (Axios.isCancel(err)) {
+          console.log('fetchOrders canceled');
+        } else {
+          setIsLoading(false);
+          console.error(err);
+        }
       });
+    return () => {
+      source.cancel();
+    };
   }, []);
   return [orders, isLoading];
 }
 
 function Orders({ className }) {
-  // const initialOrders = [
-  //   {
-  //     ingredients: {
-  //       salad: 1,
-  //       bacon: 1,
-  //       cheese: 1,
-  //       beef: 1,
-  //     },
-  //     price: 4.99,
-  //   },
-  // ];
-  const [orders, isLoading] = useOrders();
-
+  const [orders, isLoading] = useOrders(null);
+  console.log('[Orders] orders', orders);
   return (
     <div className={className}>
       {isLoading && <Spinner show={isLoading} />}
@@ -89,7 +90,7 @@ function Orders({ className }) {
   );
 }
 
-export default styled(Orders)`
+const StyledOrders = styled(Orders)`
   ${(props) => css`
     background: var(--cl-accent);
     position: absolute;
@@ -101,3 +102,5 @@ export default styled(Orders)`
     padding: 2em 1em;
   `}
 `;
+
+export default withErrorHandler(StyledOrders, axios);

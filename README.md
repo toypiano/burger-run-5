@@ -294,3 +294,152 @@ class Clock extends React.Component {
 ```
 
 - [React: "mount" vs "render" ?](https://reacttraining.com/blog/mount-vs-render/)
+
+## You don't need all actionTypes in the reducer
+
+You need to include an actionType in the reducer **only if that action produces new state**.
+You can define actions which don't get used in your reducer.  
+We can dispatch those actions to log certain events that happened in our application to the Redux DevTool. This is very handy when developing & debugging your app.
+
+`/src/app/ducks/orders.js`
+
+```js
+import produce from 'immer';
+import axios from '../../common/axios-orders';
+
+// Actions
+const ORDER_SUCCESS = 'checkout/contactData/orderSuccess';
+const ORDER_FAIL = 'checkout/contactData/orderFail';
+const FETCH_SUCCESS = 'orders/fetchSuccess';
+const FETCH_FAIL = 'orders/fetchFail';
+
+// Reducer
+const initialState = {
+  orders: [],
+};
+
+export default function ordersReducer(state = initialState, action) {
+  switch (action.type) {
+    case FETCH_SUCCESS: // only this action updates the state
+      return produce(state, (draft) => {
+        const ordersArray = Object.entries(
+          action.orders
+        ).map(([id, order]) => ({ id, ...order }));
+        draft.orders = ordersArray;
+      });
+    default:
+      return state;
+  }
+}
+
+// Action Creators
+export const orderSuccess = (id, order) => ({
+  type: ORDER_SUCCESS,
+  id,
+  order,
+});
+
+export const orderFail = (error, failedOrder) => ({
+  type: ORDER_FAIL,
+  error,
+  failedOrder,
+});
+
+export const fetchSuccess = (orders) => ({
+  type: FETCH_SUCCESS,
+  orders,
+});
+
+export const fetchFail = (error) => ({
+  type: FETCH_FAIL,
+  error,
+});
+
+// Thunks
+export const orderBurger = (order) => async (dispatch) => {
+  try {
+    const response = await axios.post('/orders.json', order);
+    dispatch(orderSuccess(response.data.name, order));
+  } catch (err) {
+    dispatch(orderFail(err, order));
+  }
+};
+
+export const fetchOrders = () => async (dispatch) => {
+  try {
+    const response = await axios.get('/orders.json');
+    dispatch(fetchSuccess(response.data));
+  } catch (err) {
+    dispatch(fetchFail(err));
+  }
+};
+```
+
+## Cleaning Up async requests in useEffect
+
+When you try to update a state from an unmounted component, React will throw this error:
+
+<img src="./cleanUp.png" width="350">
+
+You can cancel pending axios request from unmounted component by using the axios _cancel token_ API.
+
+```js
+import Axios from 'axios'; // import axios constructor
+import axios from '../../common/axios-orders'; // import axios instance
+.
+.
+.
+useEffect(() => {
+    // CancelToken is the static method!
+    const source = Axios.CancelToken.source();
+    axios // pass an option as 2nd arg
+      .get('/orders.json', { cancelToken: source.token })
+      .then((res) => {
+        if (res.data) {
+          const orders = Object.entries(res.data).map(([id, order]) => ({
+            id,
+            ...order,
+          }));
+          setOrders(orders);
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (Axios.isCancel(err)) {
+          console.log('fetchOrders canceled');
+        } else {
+          setIsLoading(false);
+          console.error(err);
+        }
+      });
+    return () => {
+      // cancel request that has the source.token
+      source.cancel();
+    };
+  }, []);
+```
+
+Read: [Read Hook - Clean Up useEffect](https://dev.to/iquirino/react-hook-clean-up-useeffect-24e7)
+
+## Noise in the database documents can break your app!
+
+Does your app breaks throwing a typeError and the error originates from the place where you **did implemented a type-guard** like this?
+
+```jsx
+<div className={className}>
+  {isLoading && <Spinner show={isLoading} />}
+  {orders && // if orders is falsy, drop it!
+    orders.map((order) => (
+      <Order
+        key={order.id}
+        ingredients={order.ingredients} // ingredients gets 'null' in Order
+        price={order.price}
+      />
+    ))}
+</div>
+```
+
+- It means that the `orders` array is defined and you pass the type-guard into mapping through the `orders` array where you pass `Order` component the props it needs from the member of the `orders` array.
+- However, if one of the order from your database doesn't contain `ingredients` field, `orders` will still pass the type-guard, and `order.ingredients` will evaluates to `undefined`.
+- In the real app, you need to implement type-checking on the data you fetch from the database.
+  - Use typescript or graphQL
