@@ -74,7 +74,6 @@ function useOrders() {
 
 function Orders({ className }) {
   const [orders, isLoading] = useOrders(null);
-  console.log('[Orders] orders', orders);
   return (
     <div className={className}>
       {isLoading && <Spinner show={isLoading} />}

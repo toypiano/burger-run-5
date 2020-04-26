@@ -3,7 +3,7 @@ import Layout from '../features/layout/Layout';
 import { Switch, Route } from 'react-router-dom';
 import BurgerBuilderContainer from '../features/burgerBuilder/BurgerBuilderContainer';
 import CheckoutContainer from '../features/checkout/CheckoutContainer';
-import Orders from '../features/orders/Orders';
+import OrdersContainer from '../features/orders/OrdersContainer';
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Switch>
           <Route path="/" exact component={BurgerBuilderContainer} />
           <Route path="/checkout" component={CheckoutContainer} />
-          <Route path="/orders" component={Orders} />
+          <Route path="/orders" component={OrdersContainer} />
         </Switch>
       </Layout>
     </div>
