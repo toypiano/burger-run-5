@@ -16,7 +16,12 @@ const INGREDIENT_PRICE = {
   beef: 1.3,
 };
 const initialState = {
-  ingredients: { salad: 1, bacon: 1, cheese: 1, beef: 1 },
+  ingredients: {
+    salad: 1,
+    bacon: 1,
+    cheese: 1,
+    beef: 1,
+  },
   price: BASE_PRICE,
   fetchError: false,
 };
@@ -67,5 +72,6 @@ export const initIngredients = () => async (dispatch) => {
     dispatch({ type: FETCH_INGREDIENTS_SUCCESS, ingredients: response.data });
   } catch (err) {
     dispatch({ type: FETCH_INGREDIENTS_FAIL });
+    console.log(err);
   }
 };

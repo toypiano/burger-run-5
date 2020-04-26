@@ -18,11 +18,14 @@ BurgerBuilder.propTypes = {
 const controlItems = ['salad', 'bacon', 'cheese', 'beef'];
 
 const getPurchasable = (ingredients) => {
-  const totalQty = Object.values(ingredients).reduce(
-    (sum, val) => sum + val,
-    0
-  );
-  return totalQty > 0;
+  if (ingredients) {
+    const totalQty = Object.values(ingredients).reduce(
+      (sum, val) => sum + val,
+      0
+    );
+    return totalQty > 0;
+  }
+  return false;
 };
 
 function BurgerBuilder({
@@ -56,7 +59,7 @@ function BurgerBuilder({
     history.push('/checkout');
   };
 
-  const modal = (
+  const orderSummary = (
     <Modal show={isOrdering} closeModal={cancelOrder}>
       <OrderSummary
         ingredients={ingredients}
@@ -75,7 +78,7 @@ function BurgerBuilder({
   return (
     <div className={className}>
       {fetchingIngredients && <Spinner />}
-      {modal}
+      {orderSummary}
       <div className="burger-container">
         {fetchError ? fetchErrorMessage : <Burger ingredients={ingredients} />}
       </div>
