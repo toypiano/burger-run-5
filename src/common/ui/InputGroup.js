@@ -23,7 +23,7 @@ const StyledInput = styled.div`
   width: 100%;
 `;
 
-const Input = ({ inputType, config, valid, touched, onChange }) => {
+const Input = ({ inputType, config, valid, touched, onChange, focused }) => {
   switch (inputType) {
     case 'input':
       return (
@@ -33,6 +33,7 @@ const Input = ({ inputType, config, valid, touched, onChange }) => {
           valid={valid}
           touched={touched}
           onChange={onChange}
+          onFocus={focused}
         />
       );
     case 'textarea':
@@ -68,17 +69,19 @@ const Input = ({ inputType, config, valid, touched, onChange }) => {
         </StyledInput>
       );
     default:
-      return (
-        <StyledInput
-          as="input"
-          placeholder={config.placeholder}
-          type={config.type}
-        />
-      );
+      throw new Error('unknown inputType');
   }
 };
 
-function InputGroup({ inputType, config, value, onChange, valid, touched }) {
+function InputGroup({
+  inputType,
+  config,
+  value,
+  onChange,
+  valid,
+  touched,
+  focused,
+}) {
   return (
     <StyledInputGroup>
       <label>{config.label}</label>
@@ -89,6 +92,7 @@ function InputGroup({ inputType, config, value, onChange, valid, touched }) {
         inputType={inputType}
         valid={valid}
         touched={touched}
+        focused={focused}
       />
     </StyledInputGroup>
   );
