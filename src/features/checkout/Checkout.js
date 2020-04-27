@@ -20,6 +20,7 @@ function Checkout({
   ingredients,
   price,
   orderBurger,
+  idToken,
 }) {
   const continueCheckout = () => {
     history.replace('/checkout/contact-data');
@@ -43,6 +44,7 @@ function Checkout({
             ingredients={ingredients}
             history={history}
             orderBurger={orderBurger}
+            idToken={idToken}
           />
         )}
       />

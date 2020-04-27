@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import axios from '../../../common/axios-orders';
@@ -16,12 +16,19 @@ ContactData.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function ContactData({ className, ingredients, price, history, orderBurger }) {
+function ContactData({
+  className,
+  ingredients,
+  price,
+  history,
+  orderBurger,
+  idToken,
+}) {
   // rendering starts
   const [isLoading, setIsLoading] = useState(false);
   const [orderForm, updateOrderForm] = useImmer(initialOrderForm);
   const [isFormValid, setIsFormValid] = useState(false);
-  const source = Axios.CancelToken.source();
+  const sourceRef = useRef(Axios.CancelToken.source());
   // effect function will run after ContactData return + DOM update
   useEffect(() => {
     const isFormValid = Object.keys(orderForm).reduce(
@@ -30,9 +37,9 @@ function ContactData({ className, ingredients, price, history, orderBurger }) {
     );
     setIsFormValid(isFormValid); // this will trigger re-render
     return () => {
-      source.cancel(); // cancel pending request on component unmount
+      sourceRef.current.cancel(); // cancel pending request on component unmount
     };
-  }, [orderForm, source]); // will run whenever orderForm is updated.
+  }, [orderForm]); // will run whenever orderForm is updated.
 
   // only this handler function will run from the latest render scope
   const handleFormSubmit = async (e) => {
@@ -48,13 +55,16 @@ function ContactData({ className, ingredients, price, history, orderBurger }) {
       customer: formData,
       deliveryMethod: 'fastest',
     };
+    sourceRef.current = Axios.CancelToken.source();
     (async () => {
-      const thrown = await orderBurger(order, source);
-      if (!Axios.isCancel(thrown)) {
+      const thrown = await orderBurger(order, sourceRef.current, idToken);
+      console.log(thrown);
+      if (!thrown) {
         setIsLoading(false);
         history.push('/');
       }
     })();
+    setIsLoading(false);
   };
 
   const handleInputChange = (value, inputField) => {

@@ -471,6 +471,11 @@ Readings:
 
 - [Clean up async requests in useEffect hooks](https://dev.to/pallymore/clean-up-async-requests-in-useeffect-hooks-90h)
 
+## React Async package
+
+- [repo](https://github.com/async-library/react-async)
+- [useEffect memory leak when setting state in fetch promise](https://github.com/facebook/react/issues/15006)
+
 ## Noise in the database documents can break your app!
 
 Does your app breaks throwing a typeError and the error originates from the place where you **did implemented a type-guard** like this?
@@ -518,3 +523,23 @@ try {
 
 - [Sign up with email / password](https://firebase.google.com/docs/reference/rest/auth#section-create-email-password)
 - [Sign in with email / password](https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password)
+
+## Firebase separate rules per field
+
+`Develop > Database > Rules`
+
+```json
+{
+  "rules": {
+    "ingredients": {
+      ".read": true,
+      ".write": true
+    },
+    "orders": {
+      // allow only authenticated request to read & write
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}
+```

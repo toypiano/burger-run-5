@@ -12,12 +12,12 @@ Orders.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function Orders({ className, orders, fetchOrders }) {
+function Orders({ className, orders, fetchOrders, idToken }) {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const source = Axios.CancelToken.source(); // get req source
     (async () => {
-      const thrown = await fetchOrders(source); // call thunked dispatcher with source
+      const thrown = await fetchOrders(source, idToken); // call thunked dispatcher with source
       // stop if request canceled
       if (!Axios.isCancel(thrown)) {
         setIsLoading(false); // spinner off when done
@@ -27,7 +27,7 @@ function Orders({ className, orders, fetchOrders }) {
     return () => {
       source.cancel(); // cleanup: cancel req with specified token on unmount
     };
-  }, [fetchOrders]);
+  }, [fetchOrders, idToken]);
   return (
     <div className={className}>
       {isLoading && <Spinner show={isLoading} />}
