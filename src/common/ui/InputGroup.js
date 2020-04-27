@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const StyledInputGroup = styled.div`
   margin-bottom: 1em;
@@ -13,11 +13,14 @@ const StyledInput = styled.div`
   display: block;
   font: inherit;
   font-size: 1.2rem;
-  border: ${(props) =>
+  border: 1px solid var(--cl-gray);
+  ${(props) =>
     !props.valid && props.touched
-      ? '2px solid red'
-      : '1px solid var(--cl-gray)'};
-
+      ? css`
+          border: 2px solid red;
+          background: rgba(255, 230, 230, 0.8);
+        `
+      : null}
   border-radius: 8px;
   padding: 0.5em 1em;
   width: 100%;

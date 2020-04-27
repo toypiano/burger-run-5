@@ -3,10 +3,7 @@ import Auth from './Auth';
 import * as actionCreators from '../../app/ducks/auth';
 
 const mapState = (state) => {
-  const {
-    auth: { error },
-  } = state;
-  return { error };
+  return { ...state.auth };
 };
 
 export default connect(mapState, actionCreators)(Auth);

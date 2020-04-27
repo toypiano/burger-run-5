@@ -5,6 +5,7 @@ import useImmer from '../../common/hooks/useImmer';
 import { validateInputValue } from '../../common/validation/inputValidation';
 import InputGroup from '../../common/ui/InputGroup';
 import Button from '../../common/ui/Button';
+import Spinner from '../../common/ui/Spinner';
 
 const StyledAuth = styled.div`
   margin: 5em auto;
@@ -61,7 +62,7 @@ const initialState = {
 };
 
 // Component
-function Auth({ auth, error }) {
+function Auth({ auth, error, isLoading, localId, idToken }) {
   const [controls, updateControls] = useImmer(initialState);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
@@ -103,6 +104,7 @@ function Auth({ auth, error }) {
 
   return (
     <StyledAuth>
+      {isLoading && <Spinner show={isLoading} />}
       <form onSubmit={handleFormSubmit}>
         {inputControls}
         <div className="auth__buttons">

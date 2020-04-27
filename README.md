@@ -513,3 +513,8 @@ try {
   dispatch(authFail(error));
 }
 ```
+
+## Firebase REST authentication
+
+- [Sign up with email / password](https://firebase.google.com/docs/reference/rest/auth#section-create-email-password)
+- [Sign in with email / password](https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password)
