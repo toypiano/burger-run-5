@@ -3,10 +3,23 @@ import styled, { css } from 'styled-components';
 const dangerCss = css`
   background: var(--cl-danger);
   color: var(--cl-light);
+  border: 2px solid var(--cl-danger);
 `;
 const successCss = css`
   background: var(--cl-success);
   color: var(--cl-light);
+  border: 2px solid var(--cl-success);
+`;
+
+const outlineSuccessCss = css`
+  background: transparent;
+  color: var(--cl-success);
+  border: 2px solid var(--cl-success);
+  transition: all 200ms ease;
+  &:hover {
+    color: var(--cl-light);
+    background: var(--cl-success);
+  }
 `;
 
 const getButtonVariant = (variant) => {
@@ -15,6 +28,8 @@ const getButtonVariant = (variant) => {
       return dangerCss;
     case 'success':
       return successCss;
+    case 'outline-success':
+      return outlineSuccessCss;
     default:
       return null;
   }
@@ -33,9 +48,6 @@ export default styled.button`
     filter: brightness(1.3);
   }
   &:active {
-    position: relative;
-    left: 1px;
-    top: 1px;
     filter: brightness(0.9);
   }
   &:disabled {

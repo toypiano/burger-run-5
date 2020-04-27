@@ -493,3 +493,23 @@ Does your app breaks throwing a typeError and the error originates from the plac
 - However, if one of the order from your database doesn't contain `ingredients` field, `orders` will still pass the type-guard, and `order.ingredients` will evaluates to `undefined`.
 - In the real app, you need to implement type-checking on the data you fetch from the database.
   - Use typescript or graphQL
+
+## Catch validation errors from the server with Axios:
+
+- [axios - handling errors](https://github.com/axios/axios#handling-errors)
+- [github issue](https://github.com/axios/axios/issues/960)
+
+Axios will by default, wrap the error response in its own error object and pass to the catch block.
+
+```js
+try {
+  const response = await axios.post(uri, payload);
+  console.log(response);
+  dispatch(authSuccess(response.data));
+} catch (err) {
+  // use err if no response (server error)
+  const error = err.response ? err.response.data.error : err;
+  console.error(error);
+  dispatch(authFail(error));
+}
+```

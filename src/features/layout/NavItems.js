@@ -16,6 +16,7 @@ function NavItems({ className }) {
         Burger Builder
       </NavItem>
       <NavItem linkTo="/orders">Orders</NavItem>
+      <NavItem linkTo="/auth">SignUp</NavItem>
     </ul>
   );
 }

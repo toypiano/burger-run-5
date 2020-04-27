@@ -21,7 +21,9 @@ function NavItem({ className, linkTo, exact, children }) {
 
 export default styled(NavItem)`
   ${(props) => css`
-    border-bottom: 3px dashed rgba(0, 0, 0, 0.1);
+    &:not(:last-of-type) {
+      border-bottom: 3px dashed rgba(0, 0, 0, 0.1);
+    }
     flex: 1 1 auto;
     width: 100%;
     display: flex;

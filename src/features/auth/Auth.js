@@ -10,6 +10,21 @@ const StyledAuth = styled.div`
   margin: 5em auto;
   width: 90%;
   max-width: var(--mw-modal);
+  .auth__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    button {
+      flex: 1 1 auto;
+    }
+  }
+  .auth__error-message {
+    text-align: center;
+    width: 100%;
+    padding: 2em;
+    margin-top: 2em;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--cl-accent);
+  }
 `;
 
 const initialState = {
@@ -45,9 +60,11 @@ const initialState = {
   },
 };
 
-function Auth() {
+// Component
+function Auth({ auth, error }) {
   const [controls, updateControls] = useImmer(initialState);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isSignIn, setIsSignIn] = useState(true);
 
   useEffect(() => {
     const allGood = Object.keys(controls).every((k) => controls[k].valid);
@@ -61,6 +78,15 @@ function Auth() {
       draft[k].valid = isValid;
       draft[k].touched = true;
     });
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    auth(controls.email.value, controls.password.value, isSignIn);
+  };
+
+  const handleSwitchAuthMode = () => {
+    setIsSignIn((bool) => !bool);
   };
 
   const inputControls = Object.entries(controls).map(([k, v]) => (
@@ -77,11 +103,27 @@ function Auth() {
 
   return (
     <StyledAuth>
-      <form>
+      <form onSubmit={handleFormSubmit}>
         {inputControls}
-        <Button variant="success" disabled={!isFormValid}>
-          Sign Up
-        </Button>
+        <div className="auth__buttons">
+          <Button variant="success" disabled={!isFormValid}>
+            {isSignIn ? 'SIGN IN' : 'SIGN UP'}
+          </Button>
+          <Button
+            type="button"
+            variant="outline-success"
+            onClick={handleSwitchAuthMode}
+          >
+            SWITCH TO {isSignIn ? 'SIGN UP' : 'SIGN IN'}
+          </Button>
+        </div>
+        {error && (
+          <div className="auth__error-message">
+            <p>
+              {error.code} Error: {error.message}
+            </p>
+          </div>
+        )}
       </form>
     </StyledAuth>
   );
