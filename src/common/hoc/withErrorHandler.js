@@ -5,12 +5,12 @@ import useHttpErrorHandler from '../hooks/useHttpErrorHandler';
 
 export default function withErrorHandler(C, axios) {
   return (props) => {
-    const [errorText, closeErrorModal] = useHttpErrorHandler(axios);
+    const [error, closeErrorModal] = useHttpErrorHandler(axios);
 
     return (
       <>
-        <Modal show={!!errorText} closeModal={closeErrorModal}>
-          {errorText && errorText}
+        <Modal show={!!error} closeModal={closeErrorModal}>
+          {error && error.response.data.error}
         </Modal>
         <C {...props} />
       </>

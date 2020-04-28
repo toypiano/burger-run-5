@@ -68,7 +68,9 @@ export const removeIngredient = (id) => ({
 
 export const initIngredients = () => async (dispatch) => {
   try {
+    console.log('enqueue async task - axios.get');
     const response = await axios.get('/ingredients.json');
+    console.log('fetch success');
     dispatch({ type: FETCH_INGREDIENTS_SUCCESS, ingredients: response.data });
   } catch (err) {
     dispatch({ type: FETCH_INGREDIENTS_FAIL });

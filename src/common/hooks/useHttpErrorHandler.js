@@ -1,39 +1,34 @@
 import { useState, useEffect } from 'react';
 
 export default (axios) => {
+  console.log('hoc render');
   const [error, setError] = useState(null);
   const reqInterceptor = axios.interceptors.request.use((req) => {
+    console.log('req intercept - setError');
     setError(null);
     return req;
   });
-  const resInterceptor = axios.interceptors.response.use(null, (err) => {
-    let errMsg;
-    // request was made and server responded with a non-200 status
-    if (err.response) {
-      console.log('Out of 200');
-      errMsg = [
-        JSON.stringify(err.response.status),
-        JSON.stringify(err.response.data),
-      ];
-    } else if (err.request) {
-      // request was made, but no response was received
-      console.log('no response');
-      console.log(err.request);
-      errMsg = 'Network Error: No response';
-    } else {
-      // error while setting up the request
-      console.log('non-network error');
-      errMsg = err.message;
+
+  const resInterceptor = axios.interceptors.response.use(
+    (res) => res,
+    (err) => {
+      console.log('res intercept - setError');
+      setError(err);
+      // async middleware returns Promise! (so that next middleware can chain the result)
+      return Promise.reject(err);
     }
-    console.log(errMsg);
-    setError(errMsg);
-    // async middleware returns Promise! (so that next middleware can chain the result)
-    return Promise.reject(err);
-  });
+  );
+  console.log('set interceptors: ', reqInterceptor, resInterceptor);
 
   useEffect(() => {
+    console.log('hoc effect');
     // cleanup when the component using this custom hook unmounts
     return () => {
+      console.log(
+        'hoc effect callback - eject:',
+        reqInterceptor,
+        resInterceptor
+      );
       axios.interceptors.request.eject(reqInterceptor);
       axios.interceptors.response.eject(resInterceptor);
     };

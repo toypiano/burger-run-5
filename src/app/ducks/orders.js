@@ -98,16 +98,19 @@ export const orderBurger = (order, source, token) => async (dispatch) => {
  */
 export const fetchOrders = (source, token) => async (dispatch) => {
   try {
+    console.log('Orders enqueue async job - axios.get');
     const response = await axios.get('/orders.json?auth=' + token, {
       cancelToken: source.token,
     });
+    console.log('Promise resolved');
     dispatch(fetchSuccess(response.data));
   } catch (err) {
+    console.log('Orders Promise rejected');
     if (Axios.isCancel(err)) {
       console.log('fetchOrders canceled by effect cleanup in Orders');
       return err;
     } else {
-      console.error(err);
+      // console.error(err);
       dispatch(fetchFail(err));
     }
   }
