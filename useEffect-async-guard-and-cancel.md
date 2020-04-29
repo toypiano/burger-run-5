@@ -4,7 +4,7 @@
 
 To understand useEffect, you must first understand the React component life cycle.  
 As our app starts at the BurgerBuilder page, it follows the steps below:
-<img src="./lifecycle-1.png" width="600">
+<img src="./figures/lifecycle-1.png" width="600">
 
 1. The wrapping higher order component, `withErrorHandler` is rendered. `useHttpErrorHandler` custom hook sets axios interceptors for outgoing request and incoming request in render block. (not inside useEffect).
 
@@ -47,7 +47,7 @@ As our app starts at the BurgerBuilder page, it follows the steps below:
 
 ### Event: Navigate to Orders page
 
-<img src="./lifecycle-2.png" width="600">
+<img src="./figures/lifecycle-2.png" width="600">
 
 1. HOC wrapping Orders gets rendered. Sets another pair of interceptors
 
@@ -86,9 +86,40 @@ As our app starts at the BurgerBuilder page, it follows the steps below:
 
 13. Now re-render Orders because it has new state from step 11.
 
+### Key Takeaways
+
+- If you set up your listeners (interceptors, or any other callback functions) in render block instead of `useEffect`, you should have a good reason to do so.
+  - Multiple instances of the same axios middleware function can be added to the interceptors because you are not always ejecting the old one in the `useEffect callback` before you add a new one.
+  - If those middlewares return Promise, multiple middlewares in the middleware stack will be called one after the other before request / response.
+  - This means that the same middleware gets called again and again on one event.
+- Anything that you do inside render block that is not related to the returned React Element, is a side effect (or just _effect_). They make changes to the things outside the component and make it hard to track down the bug. (This thing changes A in foo which changes B and C in baz,...)
+  - That is why React recommends you to contain side effects within `useEffect`.
+- If you need to do something with the state/props other than returning ReactElement to the virtual DOM, put them in the `useEffect`.
+- If your effect sets up a listener (subscription) to some external data source (DOM event, HTTP req/res, setTimeout...), you need to clean it up in `useEffect callback`
+- React will alway run `useEffect callback` returned from the previous `useEffect` before running the current `useEffect`. This ensures new listeners are added after the old ones are cleaned up.
+
+### Why do I get `state update on an unmounted component` warning?
+
+This happens when you set up interceptors in render block and are using `<React.StrictMode>`.
+
+- React strict mode renders everything twice except for your `useEffect` (if useEffect is not called, neither does its callback).
+- Your interceptors will be added twice but your useEffect runs just once. This means that you're cleaning up only one of two middlewares you added. Uncleaned interceptors remain in the middleware stack.
+- In other words, you are stacking up the same middlewares per render. (technically 2 renders because of strict mode).
+- Those remaining middlewares get called even after you navigate to different component that uses the same axios instance.
+- But I think
+
+_React strict mode + effects in render_
+<img src="./figures/strict-mode-mass.png" width="700">
+
+## So what is the correct place to mount this interceptor?
+
+Add interceptors right after creating the axios instance. (It will be only loaded once.)
+
+- [Where is the correct place to put interceptors in React app?](https://github.com/axios/axios/issues/2315#issuecomment-568679445)
+
 ## Cleaning Up async requests in useEffect
 
-<img src="./cleanUp.png" width="350">
+<img src="./figures/cleanUp.png" width="600">
 
 You can cancel pending axios request from unmounted component by using the axios _cancel token_ API.
 
@@ -182,92 +213,12 @@ Readings:
 
 ## React Async package
 
-- [repo](https://github.com/async-library/react-async)
-- [useEffect memory leak when setting state in fetch promise](https://github.com/facebook/react/issues/15006)
+> _To avoid calling setState after unmount from a hook, you can use the useEffect callback to set a ref value on unmount\*, and use that as a guard in your promise callbacks to check whether the component is still mounted before updating state. ... But to be honest you're probably better off not reinventing this wheel and use **useAsync** directly, because it's fully tested and covers other edge cases as well._  
+> _[ghengeveld](https://github.com/facebook/react/issues/15006#issuecomment-470285648)_
 
-## Problem with setting listeners in render
+- \* Use `let` flag instead as Dav Abramov suggests
 
-Setting listeners that calls setState in render can cause some unexpected pain even if you clean them up in `useEffect` callback.
-
-```js
-import { useState, useEffect } from 'react';
-
-export default (axios) => {
-  console.log('useError render');
-  const [error, setError] = useState(null);
-  let errMsg;
-  const reqInterceptor = axios.interceptors.request.use((req) => {
-    console.log('req intercept - setError');
-    setError(null);
-    return req;
-  });
-
-  const resInterceptor = axios.interceptors.response.use(
-    (res) => res,
-    (err) => {
-      // request was made and server responded with a non-200 status
-      if (err.response) {
-        console.log('Out of 200');
-        errMsg = [
-          JSON.stringify(err.response.status),
-          JSON.stringify(err.response.data),
-        ];
-      } else if (err.request) {
-        // request was made, but no response was received
-        console.log('no response');
-        console.log(err.request);
-        errMsg = 'Network Error: No response';
-      } else {
-        // error while setting up the request
-        console.log('non-network error');
-        errMsg = err.message;
-      }
-      console.log('res intercept - setError');
-      setError(errMsg);
-      // async middleware returns Promise! (so that next middleware can chain the result)
-      return Promise.reject(err);
-    }
-  );
-  console.log('set interceptors: ', reqInterceptor, resInterceptor);
-
-  useEffect(() => {
-    console.log('update effect');
-    // cleanup when the component using this custom hook unmounts
-    return () => {
-      console.log('eject:', reqInterceptor, resInterceptor);
-      axios.interceptors.request.eject(reqInterceptor);
-      axios.interceptors.response.eject(resInterceptor);
-    };
-  }, [
-    // linter enforced list
-    reqInterceptor,
-    resInterceptor,
-    axios.interceptors.request,
-    axios.interceptors.response,
-    errMsg,
-  ]);
-  useEffect(() => {
-    console.log('will unmount effect');
-    return () => {
-      console.log('will unmount cleanup');
-    };
-  }, []);
-
-  const closeErrorModal = () => {
-    setError(null);
-  };
-  return [error, closeErrorModal];
-};
-```
-
-The above code logs this to the console as I navigate from BurgerBuilder page to Orders page:  
-(\* make sure that you don't have components nested inside <React.Strict> since it renders function components twice except for the useEffect callback. )
-<img src="./useState-listeners-in-render.png" width="500"/>
-
-1. withErrorHandler hoc wrapping BurgerBuilder is rendered. It sets axios interceptors and renders its subtree (BurgerBuilder).
-2. After subtree is rendered & painted,
-   useEffect callback is skipped because it is just mounted and doesn't have previous render's callback. Now useEffect runs in the order they are defined.
-3.
+- [react-async](https://github.com/async-library/react-async)
 
 ## Guarding against unmount
 
@@ -280,4 +231,165 @@ Github issues:
 Articles:
 
 - [Cancelling a Promise with React.useEffect](https://juliangaramendy.dev/use-promise-subscription/)
+
+```jsx
+function BananaComponent() {
+  const [bananas, setBananas] = React.useState([]);
+
+  React.useEffect(() => {
+    let isSubscribed = true;
+    fetchBananas().then((bananas) => {
+      // checks flag at the time of Promise resolution
+      if (isSubscribed) {
+        setBananas(bananas);
+      }
+    });
+    return () => (isSubscribed = false);
+  }, []);
+
+  return (
+    <ul>
+      {bananas.map((banana) => (
+        <li>{banana}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+Handling pending and rejected promise
+
+```js
+function BananaComponent() {
+
+  const [bananas, setBananas] = React.useState(undefined);
+  const [error, setError] = React.useState('');
+
+  React.useEffect(() => {
+    let isSubscribed = true;
+    fetchBananas()
+      .then(bananas => (isSubscribed ? setBananas(bananas) : null))
+      .catch(error => (isSubscribed ? setError(error.toString()) : null));
+
+    return () => (isSubscribed = false);
+  }, []);
+
+  render (
+    <ul>
+    {!error && !bananas && <li className="loading">loading...</li>)}
+    {!error && bananas && bananas.map(banana => <li>{banana}</li>)}
+    {error && <li className="error">{error}</li>}
+    </ul>
+  )
+}
+```
+
+Custom hook version
+
+```jsx
+export function usePromise(promiseOrFunction, defaultValue) {
+  const [state, setState] = React.useState({
+    value: defaultValue,
+    error: null,
+    isPending: true,
+  });
+
+  React.useEffect(() => {
+    const promise =
+      typeof promiseOrFunction === 'function'
+        ? promiseOrFunction()
+        : promiseOrFunction;
+
+    let isSubscribed = true;
+    promise
+      .then((value) =>
+        isSubscribed ? setState({ value, error: null, isPending: false }) : null
+      )
+      .catch((error) =>
+        isSubscribed
+          ? setState({ value: defaultValue, error: error, isPending: false })
+          : null
+      );
+
+    return () => (isSubscribed = false);
+  }, [promiseOrFunction, defaultValue]);
+
+  const { value, error, isPending } = state;
+  return [value, error, isPending];
+}
+```
+
+Usage
+
+```jsx
+function BananaComponent() {
+
+  const [bananas, error, pending] = usePromise(fetchBananas, [], [])
+
+  render (
+    <ul>
+    {pending && <li className="loading">loading...</li>)}
+    {!pending && !error && bananas.map(banana => <li>{banana}</li>)}
+    {error && <li className="error">{error}</li>}
+    </ul>
+  )
+}
+```
+
+**But in practice, use [useAsync](https://docs.react-async.com/guide/async-components#more-flexibility-with-useasync)**
+
 - [ABORT DATA FETCHING IN EFFECT HOOK](https://www.robinwieruch.de/react-hooks-fetch-data) (towards the end)
+
+```js
+const useDataApi = (initialUrl, initialData) => {
+  const [url, setUrl] = useState(initialUrl);
+  const [state, dispatch] = useReducer(dataFetchReducer, {
+    isLoading: false,
+    isError: false,
+    data: initialData,
+  });
+  useEffect(() => {
+    let didCancel = false;
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_INIT' });
+      try {
+        const result = await axios(url);
+        // if Promise gets resolved after 'unmount' (or when url updates)
+        // action is not dispatched.
+        if (!didCancel) {
+          dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+        }
+      } catch (error) {
+        if (!didCancel) {
+          dispatch({ type: 'FETCH_FAILURE' });
+        }
+      }
+    };
+    fetchData();
+    return () => {
+      // this runs between next render and next useEffect
+      didCancel = true;
+    };
+  }, [url]);
+  return [state, setUrl];
+};
+```
+
+[gaearon](https://github.com/facebook/react/issues/14369#issuecomment-468267798)
+
+```js
+React.useEffect(() => {
+  let didCancel = false;
+
+  // ...
+  // you can check didCancel
+  // before running any setState
+  // ...
+
+  return () => {
+    didCancel = true;
+  };
+});
+```
+
+> The solution in #14369 (comment) is usually the right one. (Or **preferably you'd cancel the async work you're doing.**)

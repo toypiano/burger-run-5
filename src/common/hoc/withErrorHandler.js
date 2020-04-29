@@ -5,8 +5,8 @@ import useHttpErrorHandler from '../hooks/useHttpErrorHandler';
 
 export default function withErrorHandler(C, axios) {
   return (props) => {
-    const [error, closeErrorModal] = useHttpErrorHandler(axios);
-
+    console.log('[HOC] render', C.displayName);
+    const [error, closeErrorModal] = useHttpErrorHandler(axios, C.displayName);
     return (
       <>
         <Modal show={!!error} closeModal={closeErrorModal}>
