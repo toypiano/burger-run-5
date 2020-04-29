@@ -96,19 +96,22 @@ export const orderBurger = (order, source, token) => async (dispatch) => {
  *
  * @param {Source} source request source from axios.CancelToken.token()
  */
-export const fetchOrders = (source, token) => async (dispatch) => {
+export const fetchOrders = (token) => async (dispatch) => {
+  let cancel;
   try {
     const response = await axios.get('/orders.json?auth=' + token, {
-      cancelToken: source.token,
+      cancelToken: new Axios.CancelToken((c) => (cancel = c)),
     });
 
     dispatch(fetchSuccess(response.data));
   } catch (err) {
     if (Axios.isCancel(err)) {
-      return err;
+      console.log('request canceled');
     } else {
       // console.error(err);
       dispatch(fetchFail(err));
     }
+  } finally {
+    return cancel;
   }
 };

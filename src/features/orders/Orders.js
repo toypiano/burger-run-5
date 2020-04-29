@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 
-import Axios from 'axios';
 import axios from '../../common/axios-orders';
 import Order from './Order';
 import Spinner from '../../common/ui/Spinner';
@@ -14,18 +13,17 @@ Orders.propTypes = {
 
 function Orders({ className, orders, fetchOrders, idToken }) {
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const source = Axios.CancelToken.source(); // get req source
-    (async () => {
-      const thrown = await fetchOrders(source, idToken); // call thunked dispatcher with source
-      // stop if request canceled
-      if (!Axios.isCancel(thrown)) {
-        setIsLoading(false); // spinner off when done
-      }
-    })();
 
+  useEffect(() => {
+    let cancel;
+    (async () => {
+      cancel = await fetchOrders(idToken); // call thunked dispatcher with source
+      setIsLoading(false); // spinner off when done
+    })();
     return () => {
-      source.cancel(); // cleanup: cancel req with specified token on unmount
+      if (cancel) {
+        cancel('request canceled by user(Orders)'); // cleanup: cancel req with specified token on unmount
+      }
     };
   }, [fetchOrders, idToken]);
   return (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import axios from '../../common/axios-orders';
+import Axios from 'axios';
 
 import withErrorHandler from '../../common/hoc/withErrorHandler';
 
@@ -43,9 +44,13 @@ function BurgerBuilder({
 
   useEffect(() => {
     setFetchingIngredients(true);
-    initIngredients().then(() => {
+    const source = Axios.CancelToken.source();
+    initIngredients(source.token).then(() => {
       setFetchingIngredients(false);
     });
+    return () => {
+      source.cancel('request canceled by user');
+    };
   }, [initIngredients]);
 
   const beginOrder = () => {

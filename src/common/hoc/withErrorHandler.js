@@ -9,7 +9,8 @@ export default function withErrorHandler(C, axios) {
     return (
       <>
         <Modal show={!!error} closeModal={closeErrorModal}>
-          {error && error.response.data.error}
+          {error &&
+            (error.response ? error.response.data.error : error.message)}
         </Modal>
         <C {...props} />
       </>

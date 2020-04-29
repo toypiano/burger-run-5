@@ -219,6 +219,7 @@ Readings:
 - \* Use `let` flag instead as Dav Abramov suggests
 
 - [react-async](https://github.com/async-library/react-async)
+- [The Power and Convenience of useAsync](https://medium.com/better-programming/the-power-and-convenience-of-useasync-e4a3e4934143)
 
 ## Guarding against unmount
 

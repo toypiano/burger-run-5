@@ -1,5 +1,6 @@
 import produce from 'immer';
 import axios from '../../common/axios-orders';
+import Axios from 'axios';
 
 // Actions
 const ADD_INGREDIENT = 'burgerBuilder/addIngredient';
@@ -66,12 +67,15 @@ export const removeIngredient = (id) => ({
 
 // Thunks
 
-export const initIngredients = () => async (dispatch) => {
+export const initIngredients = (cancelToken) => async (dispatch) => {
   try {
-    const response = await axios.get('/ingredients.json');
+    const response = await axios.get('/ingredients.json', { cancelToken });
 
     dispatch({ type: FETCH_INGREDIENTS_SUCCESS, ingredients: response.data });
   } catch (err) {
+    if (Axios.isCancel(err)) {
+      console.log(err.message);
+    }
     dispatch({ type: FETCH_INGREDIENTS_FAIL });
     console.log(err);
   }
