@@ -38,16 +38,12 @@ function BurgerBuilder({
   initIngredients,
   fetchError,
 }) {
-  console.log('BurgerBuilder render');
   const [isOrdering, setIsOrdering] = useState(false);
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
 
   useEffect(() => {
-    console.log('BurgerBuilder useEffect');
-    console.log('BurgerBuilder setState');
     setFetchingIngredients(true);
     initIngredients().then(() => {
-      console.log('BurgerBuilder setState');
       setFetchingIngredients(false);
     });
   }, [initIngredients]);

@@ -13,23 +13,18 @@ Orders.propTypes = {
 };
 
 function Orders({ className, orders, fetchOrders, idToken }) {
-  console.log('Orders render');
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    console.log('Orders effect');
-
     const source = Axios.CancelToken.source(); // get req source
     (async () => {
       const thrown = await fetchOrders(source, idToken); // call thunked dispatcher with source
       // stop if request canceled
       if (!Axios.isCancel(thrown)) {
-        console.log('Orders - setIsLoading: false');
         setIsLoading(false); // spinner off when done
       }
     })();
 
     return () => {
-      console.log('Orders effect callback');
       source.cancel(); // cleanup: cancel req with specified token on unmount
     };
   }, [fetchOrders, idToken]);
