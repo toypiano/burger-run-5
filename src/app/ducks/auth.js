@@ -90,10 +90,17 @@ export const auth = (email, password, isSignIn) => async (dispatch) => {
     dispatch(authSuccess(response.data));
     dispatch(checkAuthTimeout(response.data.expiresIn));
   } catch (err) {
-    // use err if no response (server error)
-    const error = err.response ? err.response.data.error : err;
-    console.error(error);
-    dispatch(authFail(error));
+    if (err.response) {
+      // server response > 200
+      dispatch(authFail('Error: ' + err.response.data.error.message));
+    } else if (err.request) {
+      // request made, but No response from the server
+      dispatch(authFail('Error: No response from the server'));
+    } else {
+      // error thrown before sending request
+      dispatch(authFail("Error: request couldn't be made"));
+      console.error(err.config);
+    }
   }
 };
 

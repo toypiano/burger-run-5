@@ -121,9 +121,7 @@ function Auth({ auth, error, isLoading, localId, idToken }) {
         </div>
         {error && (
           <div className="auth__error-message">
-            <p>
-              {error.code} Error: {error.message}
-            </p>
+            <p>{error}</p>
           </div>
         )}
       </form>
