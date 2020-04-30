@@ -15,6 +15,7 @@ function BuildControls({
   ingredients,
   price,
   isPurchasable,
+  isAuthenticated,
   addIngredient,
   removeIngredient,
   beginOrder,
@@ -36,7 +37,7 @@ function BuildControls({
         />
       ))}
       <OrderButton disabled={!isPurchasable || fetchError} clicked={beginOrder}>
-        Order Now
+        {isAuthenticated ? 'Order Now' : 'Sign In to Order'}
       </OrderButton>
     </div>
   );

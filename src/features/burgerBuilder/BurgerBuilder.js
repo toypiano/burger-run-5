@@ -38,6 +38,7 @@ function BurgerBuilder({
   removeIngredient,
   initIngredients,
   fetchError,
+  isAuthenticated,
 }) {
   const [isOrdering, setIsOrdering] = useState(false);
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
@@ -96,6 +97,7 @@ function BurgerBuilder({
         isPurchasable={getPurchasable(ingredients)}
         beginOrder={beginOrder}
         fetchError={fetchError}
+        isAuthenticated={isAuthenticated}
       />
     </div>
   );

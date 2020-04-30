@@ -6,8 +6,9 @@ import BurgerBuilder from './BurgerBuilder';
 const mapState = (state) => {
   const {
     burgerBuilder: { ingredients, price, fetchError },
+    auth: { idToken },
   } = state;
-  return { ingredients, price, fetchError };
+  return { ingredients, price, fetchError, isAuthenticated: idToken !== null };
 };
 
 export default connect(mapState, actionCreators)(BurgerBuilder);

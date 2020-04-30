@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { Redirect } from 'react-router-dom';
 
 import useImmer from '../../common/hooks/useImmer';
 import { validateInputValue } from '../../common/validation/inputValidation';
@@ -62,7 +63,7 @@ const initialState = {
 };
 
 // Component
-function Auth({ auth, error, isLoading, localId, idToken }) {
+function Auth({ auth, error, isLoading, isAuthenticated }) {
   const [controls, updateControls] = useImmer(initialState);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
@@ -105,6 +106,7 @@ function Auth({ auth, error, isLoading, localId, idToken }) {
   return (
     <StyledAuth>
       {isLoading && <Spinner show={isLoading} />}
+      {isAuthenticated && <Redirect to="/" />}
       <form onSubmit={handleFormSubmit}>
         {inputControls}
         <div className="auth__buttons">

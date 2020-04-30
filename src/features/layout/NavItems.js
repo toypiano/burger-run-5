@@ -15,7 +15,7 @@ function NavItems({ className, isAuthenticated }) {
       <NavItem linkTo="/" exact>
         Burger Builder
       </NavItem>
-      <NavItem linkTo="/orders">Orders</NavItem>
+      {isAuthenticated && <NavItem linkTo="/orders">Orders</NavItem>}
       {isAuthenticated ? (
         <NavItem linkTo="/signout">Sign Out</NavItem>
       ) : (

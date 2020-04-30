@@ -14,6 +14,7 @@ const initialState = {
   localId: null,
   error: null,
   isLoading: false,
+  authRedirectPath: '/',
 };
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -38,6 +39,10 @@ export default function reducer(state = initialState, action) {
       return produce(state, (d) => {
         d.localId = null;
         d.idToken = null;
+      });
+    case REDIRECT_PATH_SET:
+      return produce(state, (d) => {
+        d.authRedirectPath = action.authRedirectPath;
       });
     default:
       return state;
