@@ -9,14 +9,18 @@ NavItems.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function NavItems({ className }) {
+function NavItems({ className, isAuthenticated }) {
   return (
     <ul className={className}>
       <NavItem linkTo="/" exact>
         Burger Builder
       </NavItem>
       <NavItem linkTo="/orders">Orders</NavItem>
-      <NavItem linkTo="/auth">SignUp</NavItem>
+      {isAuthenticated ? (
+        <NavItem linkTo="/signout">Sign Out</NavItem>
+      ) : (
+        <NavItem linkTo="/auth">SignUp</NavItem>
+      )}
     </ul>
   );
 }

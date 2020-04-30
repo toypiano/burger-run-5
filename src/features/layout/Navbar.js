@@ -11,12 +11,12 @@ Navbar.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function Navbar({ className, openSideDrawer }) {
+function Navbar({ className, openSideDrawer, isAuthenticated }) {
   return (
     <div className={className}>
       <DrawerToggle clicked={openSideDrawer} />
       <Logo className="logo" />
-      <NavItems desktopOnly />
+      <NavItems isAuthenticated={isAuthenticated} desktopOnly />
     </div>
   );
 }

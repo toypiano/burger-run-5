@@ -8,13 +8,17 @@ Layout.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function Layout({ className, children }) {
+function Layout({ className, children, isAuthenticated }) {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   return (
     <div className={className}>
-      <Navbar openSideDrawer={() => setIsSideDrawerOpen(true)} />
+      <Navbar
+        openSideDrawer={() => setIsSideDrawerOpen(true)}
+        isAuthenticated={isAuthenticated}
+      />
       <SideDrawer
         isOpen={isSideDrawerOpen}
+        isAuthenticated={isAuthenticated}
         closeSideDrawer={() => setIsSideDrawerOpen(false)}
       />
       <main>{children}</main>

@@ -9,12 +9,12 @@ SideDrawer.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function SideDrawer({ className, isOpen, closeSideDrawer }) {
+function SideDrawer({ className, isOpen, closeSideDrawer, isAuthenticated }) {
   return (
     <>
       <Backdrop show={isOpen} clicked={closeSideDrawer} />
       <div className={className} onClick={closeSideDrawer}>
-        <NavItems />
+        <NavItems isAuthenticated={isAuthenticated} />
       </div>
     </>
   );

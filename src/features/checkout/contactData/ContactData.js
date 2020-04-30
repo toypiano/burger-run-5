@@ -53,12 +53,10 @@ function ContactData({
       ingredients,
       price,
       customer: formData,
-      deliveryMethod: 'fastest',
     };
     sourceRef.current = Axios.CancelToken.source();
     (async () => {
       const thrown = await orderBurger(order, sourceRef.current, idToken);
-      console.log(thrown);
       if (!thrown) {
         setIsLoading(false);
         history.push('/');
