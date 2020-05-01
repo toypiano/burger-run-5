@@ -26,7 +26,15 @@ const StyledInput = styled.div`
   width: 100%;
 `;
 
-const Input = ({ inputType, config, valid, touched, onChange, focused }) => {
+const Input = ({
+  inputType,
+  config,
+  valid,
+  touched,
+  onChange,
+  focused,
+  autoFocus,
+}) => {
   switch (inputType) {
     case 'input':
       return (
@@ -37,6 +45,7 @@ const Input = ({ inputType, config, valid, touched, onChange, focused }) => {
           touched={touched}
           onChange={onChange}
           onFocus={focused}
+          autoFocus={autoFocus}
         />
       );
     case 'textarea':
@@ -47,6 +56,7 @@ const Input = ({ inputType, config, valid, touched, onChange, focused }) => {
           valid={valid}
           touched={touched}
           onChange={onChange}
+          autoFocus={autoFocus}
         />
       );
     case 'select':
@@ -57,6 +67,7 @@ const Input = ({ inputType, config, valid, touched, onChange, focused }) => {
           valid={valid}
           touched={touched}
           onChange={onChange}
+          autoFocus={autoFocus}
         >
           {config.options.map((option) =>
             option.value ? (
@@ -84,6 +95,7 @@ function InputGroup({
   valid,
   touched,
   focused,
+  autoFocus,
 }) {
   return (
     <StyledInputGroup>
@@ -96,6 +108,7 @@ function InputGroup({
         valid={valid}
         touched={touched}
         focused={focused}
+        autoFocus={autoFocus}
       />
     </StyledInputGroup>
   );

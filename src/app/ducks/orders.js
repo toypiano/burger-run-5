@@ -3,6 +3,7 @@ import axios from '../../common/axios-orders';
 import Axios from 'axios';
 
 // Actions
+const ORDER_REQUEST = 'checkout/contactData/orderRequest';
 const ORDER_SUCCESS = 'checkout/contactData/orderSuccess';
 const ORDER_FAIL = 'checkout/contactData/orderFail';
 const FETCH_SUCCESS = 'orders/fetchSuccess';
@@ -53,6 +54,11 @@ response.data =
 */
 
 // Action Creators
+export const orderRequest = (order) => ({
+  type: ORDER_REQUEST,
+  order,
+});
+
 export const orderSuccess = (id, order) => ({
   type: ORDER_SUCCESS,
   id,
@@ -78,6 +84,7 @@ export const fetchFail = (error) => ({
 // Thunks
 export const orderBurger = (order, source, token) => async (dispatch) => {
   try {
+    dispatch(orderRequest(order));
     const response = await axios.post('/orders.json?auth=' + token, order, {
       cancelToken: source.token,
     });

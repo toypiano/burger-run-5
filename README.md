@@ -6,6 +6,23 @@
 - VSCode snippet for styled-components + react
   - [gist](https://gist.github.com/toypiano/6ac3f3f230cf0a87e179401652d578e1)
 - `useImmer`
+- auto-focus the first input control on page load with `autoFocus` prop
+
+```jsx
+const inputControls = Object.entries(controls).map(([k, v], i) => (
+  <InputGroup
+    key={k}
+    inputType={v.inputType}
+    config={v.config}
+    valid={v.valid}
+    onChange={(e) => handleInputChange(e, k)}
+    touched={v.touched}
+    value={v.value}
+    autoFocus={i === 0}
+  />
+));
+// Check InputGroup component for more detail
+```
 
 ```ts
 import { useState } from 'react';
@@ -442,3 +459,45 @@ try {
   }
 }
 ```
+
+## Auto-focusing `<NavLink>` after `<Redirect>`
+
+### When
+
+After signing out, SignOut component returns `<Redirect to="/" />` and NavLink to sign-out is replaced with NavLink to "auth" page.
+
+### Problem
+
+After redirect, NavLink to "BurgerBuilder" has ".active" class but "Sign In" link is focused, which wasn't even previously rendered.
+
+### Solution
+
+Pass ref to the parent "li" element and check the child NavLink's .active class in `useEffect`. If it's active, manually focus it.  
+Seems to work, but not sure if it's correct way to do it.
+
+```jsx
+function NavItem({ className, linkTo, exact, children }) {
+  const ref = useRef();
+  useEffect(() => {
+    if (ref.current.children[0].classList.contains('active')) {
+      ref.current.children[0].focus();
+    }
+  });
+  return (
+    <li className={className} ref={ref}>
+      <NavLink className="navLink" to={linkTo} exact={exact}>
+        {children}
+      </NavLink>
+    </li>
+  );
+}
+```
+
+### Further Readings:
+
+- [What we learned from user testing of accessible client-side routing techniques with Fable Tech Labs](https://www.gatsbyjs.org/blog/2019-07-11-user-testing-accessible-client-routing/)
+- [react-router/issues](https://github.com/ReactTraining/react-router/issues/5210#issuecomment-582053359)
+
+### Look into:
+
+- [Reach Router](https://reach.tech/router)

@@ -63,7 +63,15 @@ const initialState = {
 };
 
 // Component
-function Auth({ auth, error, isLoading, isAuthenticated }) {
+function Auth({
+  auth,
+  error,
+  isLoading,
+  isAuthenticated,
+  isBuilding,
+  authRedirectPath,
+  setAuthRedirectPath,
+}) {
   const [controls, updateControls] = useImmer(initialState);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
@@ -71,7 +79,19 @@ function Auth({ auth, error, isLoading, isAuthenticated }) {
   useEffect(() => {
     const allGood = Object.keys(controls).every((k) => controls[k].valid);
     setIsFormValid(allGood);
-  }, [controls]);
+  }, [controls, authRedirectPath]);
+
+  // use separate effect for separate concerns
+  useEffect(() => {
+    // If user came to /auth with link without touching the burger, send them back to main
+    if (!isBuilding && authRedirectPath !== '/') {
+      setAuthRedirectPath('/');
+    }
+    // If burger is touched (building), redirect to /checkout once authenticated
+    else if (isBuilding) {
+      setAuthRedirectPath('/checkout');
+    }
+  }, [isBuilding, setAuthRedirectPath, authRedirectPath]);
 
   const handleInputChange = (e, k) => {
     const isValid = validateInputValue(e.target.value, controls[k].validation);
@@ -91,7 +111,7 @@ function Auth({ auth, error, isLoading, isAuthenticated }) {
     setIsSignIn((bool) => !bool);
   };
 
-  const inputControls = Object.entries(controls).map(([k, v]) => (
+  const inputControls = Object.entries(controls).map(([k, v], i) => (
     <InputGroup
       key={k}
       inputType={v.inputType}
@@ -100,13 +120,14 @@ function Auth({ auth, error, isLoading, isAuthenticated }) {
       onChange={(e) => handleInputChange(e, k)}
       touched={v.touched}
       value={v.value}
+      autoFocus={i === 0}
     />
   ));
 
   return (
     <StyledAuth>
       {isLoading && <Spinner show={isLoading} />}
-      {isAuthenticated && <Redirect to="/" />}
+      {isAuthenticated && <Redirect to={authRedirectPath} />}
       <form onSubmit={handleFormSubmit}>
         {inputControls}
         <div className="auth__buttons">

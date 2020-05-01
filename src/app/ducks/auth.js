@@ -42,7 +42,7 @@ export default function reducer(state = initialState, action) {
       });
     case REDIRECT_PATH_SET:
       return produce(state, (d) => {
-        d.authRedirectPath = action.authRedirectPath;
+        d.authRedirectPath = action.path;
       });
     default:
       return state;

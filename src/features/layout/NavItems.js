@@ -19,7 +19,7 @@ function NavItems({ className, isAuthenticated }) {
       {isAuthenticated ? (
         <NavItem linkTo="/signout">Sign Out</NavItem>
       ) : (
-        <NavItem linkTo="/auth">SignUp</NavItem>
+        <NavItem linkTo="/auth">Sign In</NavItem>
       )}
     </ul>
   );

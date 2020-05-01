@@ -79,7 +79,7 @@ function ContactData({
     ...orderForm[inputField],
   }));
 
-  const inputs = inputObjects.map((o) => (
+  const inputs = inputObjects.map((o, i) => (
     <InputGroup
       key={o.inputField}
       inputType={o.inputType}
@@ -88,6 +88,7 @@ function ContactData({
       onChange={(e) => handleInputChange(e.target.value, o.inputField)}
       touched={o.touched}
       valid={o.valid}
+      autoFocus={i === 0}
     />
   ));
 

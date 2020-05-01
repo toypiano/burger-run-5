@@ -4,9 +4,10 @@ import * as actionCreators from '../../app/ducks/auth';
 
 const mapState = (state) => {
   const {
-    auth: { idToken },
+    auth: { idToken, authRedirectPath },
+    burgerBuilder: { isBuilding },
   } = state;
-  return { isAuthenticated: idToken !== null };
+  return { isAuthenticated: idToken !== null, authRedirectPath, isBuilding };
 };
 
 export default connect(mapState, actionCreators)(Auth);

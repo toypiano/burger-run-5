@@ -7,6 +7,7 @@ const ADD_INGREDIENT = 'burgerBuilder/addIngredient';
 const REMOVE_INGREDIENT = 'burgerBuilder/removeIngredient';
 const FETCH_INGREDIENTS_SUCCESS = 'burgerBuilder/fetchIngredientsSuccess';
 const FETCH_INGREDIENTS_FAIL = 'burgerBuilder/fetchIngredientsFail';
+const SIGN_IN_TO_ORDER = 'burgerBuilder/signInToOrder';
 
 // Reducer
 const BASE_PRICE = 4.99;
@@ -25,6 +26,7 @@ const initialState = {
   },
   price: BASE_PRICE,
   fetchError: false,
+  isBuilding: false,
 };
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -32,11 +34,13 @@ export default function reducer(state = initialState, action) {
       return produce(state, (d) => {
         d.ingredients[action.id]++;
         d.price += INGREDIENT_PRICE[action.id];
+        d.isBuilding = true;
       });
     case REMOVE_INGREDIENT:
       return produce(state, (d) => {
         d.ingredients[action.id]--;
         d.price -= INGREDIENT_PRICE[action.id];
+        d.isBuilding = true;
       });
     case FETCH_INGREDIENTS_SUCCESS:
       return produce(state, (d) => {
@@ -45,11 +49,17 @@ export default function reducer(state = initialState, action) {
         d.ingredients.cheese = action.ingredients.cheese;
         d.ingredients.beef = action.ingredients.beef;
         d.fetchError = false;
+        d.isBuilding = false;
       });
     case FETCH_INGREDIENTS_FAIL:
       return produce(state, (d) => {
         d.fetchError = true;
       });
+    case SIGN_IN_TO_ORDER:
+      return produce(state, (d) => {
+        d.isBuilding = true;
+      });
+
     default:
       return state;
   }
@@ -63,6 +73,10 @@ export const addIngredient = (id) => ({
 export const removeIngredient = (id) => ({
   type: REMOVE_INGREDIENT,
   id,
+});
+
+export const signInToOrder = () => ({
+  type: SIGN_IN_TO_ORDER,
 });
 
 // Thunks

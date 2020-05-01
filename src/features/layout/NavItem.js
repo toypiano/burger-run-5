@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { NavLink } from 'react-router-dom';
@@ -10,8 +10,14 @@ NavItem.propTypes = {
 };
 
 function NavItem({ className, linkTo, exact, children }) {
+  const ref = useRef();
+  useEffect(() => {
+    if (ref.current.children[0].classList.contains('active')) {
+      ref.current.children[0].focus();
+    }
+  });
   return (
-    <li className={className}>
+    <li className={className} ref={ref}>
       <NavLink className="navLink" to={linkTo} exact={exact}>
         {children}
       </NavLink>

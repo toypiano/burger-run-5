@@ -34,11 +34,13 @@ function BurgerBuilder({
   history,
   ingredients,
   price,
+  isAuthenticated,
   addIngredient,
   removeIngredient,
   initIngredients,
   fetchError,
-  isAuthenticated,
+  signInToOrder,
+  setAuthRedirectPath,
 }) {
   const [isOrdering, setIsOrdering] = useState(false);
   const [fetchingIngredients, setFetchingIngredients] = useState(false);
@@ -55,7 +57,13 @@ function BurgerBuilder({
   }, [initIngredients]);
 
   const beginOrder = () => {
-    setIsOrdering(true);
+    if (isAuthenticated) {
+      setIsOrdering(true);
+    } else {
+      signInToOrder();
+      setAuthRedirectPath('/checkout');
+      history.push('/auth');
+    }
   };
   const cancelOrder = () => {
     setIsOrdering(false);
