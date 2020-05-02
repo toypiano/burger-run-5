@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import LayoutContainer from '../features/layout/LayoutContainer';
 import { Switch, Route } from 'react-router-dom';
 import BurgerBuilderContainer from '../features/burgerBuilder/BurgerBuilderContainer';
@@ -7,7 +7,10 @@ import OrdersContainer from '../features/orders/OrdersContainer';
 import AuthContainer from '../features/auth/AuthContainer';
 import SignOutContainer from '../features/auth/SignOutContainer';
 
-function App() {
+function App({ checkAuthStatus }) {
+  useEffect(() => {
+    checkAuthStatus();
+  }, [checkAuthStatus]);
   return (
     <div className="App">
       <LayoutContainer>

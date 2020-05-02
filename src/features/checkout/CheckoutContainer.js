@@ -5,9 +5,9 @@ import { orderBurger } from '../../app/ducks/orders';
 const mapState = (state) => {
   const {
     burgerBuilder: { ingredients, price },
-    auth: { idToken },
+    auth: { idToken, localId },
   } = state;
-  return { ingredients, price, idToken };
+  return { ingredients, price, idToken, localId };
 };
 
 export default connect(mapState, { orderBurger })(Checkout);

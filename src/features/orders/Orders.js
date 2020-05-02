@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { Redirect } from 'react-router-dom';
 
 import axios from '../../common/axios-orders';
 import Order from './Order';
@@ -28,6 +29,7 @@ function Orders({ className, orders, fetchOrders, idToken }) {
   }, [fetchOrders, idToken]);
   return (
     <div className={className}>
+      {!idToken && <Redirect to="/" />}
       {isLoading && <Spinner show={isLoading} />}
       {orders &&
         orders.map((order) => (
