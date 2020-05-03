@@ -17,6 +17,7 @@ const TIMEOUT_CLEAR = 'auth/timeoutCleared';
 const initialState = {
   idToken: null,
   localId: null,
+  email: null,
   error: null,
   isLoading: false,
   authRedirectPath: '/',
@@ -33,6 +34,7 @@ export default function reducer(state = initialState, action) {
         d.error = null;
         d.localId = action.localId;
         d.idToken = action.idToken;
+        d.email = action.email;
         d.isLoading = false;
       });
     case FAIL:
@@ -44,6 +46,7 @@ export default function reducer(state = initialState, action) {
       return produce(state, (d) => {
         d.localId = null;
         d.idToken = null;
+        d.email = null;
       });
     case REDIRECT_PATH_SET:
       return produce(state, (d) => {
@@ -65,10 +68,11 @@ export const authRequest = () => ({
   type: REQUEST,
 });
 
-export const authSuccess = ({ idToken, localId }) => ({
+export const authSuccess = ({ idToken, localId, email }) => ({
   type: SUCCESS,
   idToken,
   localId,
+  email,
 });
 
 export const authFail = (error) => ({

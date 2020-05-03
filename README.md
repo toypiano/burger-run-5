@@ -7,6 +7,12 @@
   - [gist](https://gist.github.com/toypiano/6ac3f3f230cf0a87e179401652d578e1)
 - `useImmer`
 - auto-focus the first input control on page load with `autoFocus` prop
+- In ContactData, get email value from auth data.
+  - Store res.data.email into auth state
+  - mapState email from CheckoutContainer
+  - Pass email from Checkout -> ContactData
+  - In ContactData useEffect, update orderForm's email state (value, touched, valid). If you update only value, form will not validate after filling out all the other inputs.
+  - Pass value all the way down to the native input element.
 
 ```jsx
 const inputControls = Object.entries(controls).map(([k, v], i) => (
@@ -96,7 +102,9 @@ import * as reducers from './ducks/index';
 import * as burgerBuilderActions from './ducks/burgerBuilder';
 ```
 
-## React-Router: `<Route>`
+## React-Router
+
+### `<Route>`
 
 - `Route` can only pass route props (match, location, history) to functions.
   Route uses `React.createElement` to create a new react element from the given component (which is a function returning a JSX Element (object))
@@ -120,9 +128,9 @@ import * as burgerBuilderActions from './ducks/burgerBuilder';
   ```
   This will create new instance of BurgerBuilder component resulting in un-mounting and re-mounting every time you're routed to that "page".
 
-## React-Router `history` vs `location`
+### `history` vs `location`
 
-### history
+#### history
 
 - Mutable.
 - Used to navigate back and forth in the history stack.
@@ -131,7 +139,7 @@ import * as burgerBuilderActions from './ducks/burgerBuilder';
 - history.goBack()
 - history.goForward()
 
-### location
+#### location
 
 - Represents the current location
 - Always new (immutable)
@@ -149,6 +157,30 @@ import * as burgerBuilderActions from './ducks/burgerBuilder';
   ```
 - use `URLSearchParams(location.search)` to parse the search param.
   - parsed values are always string! (cheese=4 is "cheese" and "4")
+
+### Guarding Routes
+
+You can guard unauthorized routes by rendering set of routes inside `<Switch>` based on auth state. Set default route with `<Redirect to="/" >` at the end of the list.
+
+```jsx
+const routes = isAuthenticated ? (
+  <Switch>
+    <Route path="/" exact component={BurgerBuilderContainer} />
+    <Route path="/checkout" component={CheckoutContainer} />
+    <Route path="/orders" component={OrdersContainer} />
+    <Route path="/signout" component={SignOutContainer} />
+    {/* catches all other path */}
+    <Redirect to="/" />
+  </Switch>
+) : (
+  <Switch>
+    <Route path="/" exact component={BurgerBuilderContainer} />
+    <Route path="/auth" component={AuthContainer} />
+    {/* same here */}
+    <Redirect to="/" />
+  </Switch>
+);
+```
 
 ## Caveat: Multiple setStates in a single event handler
 
@@ -435,12 +467,14 @@ try {
 }
 ```
 
-## Firebase REST authentication
+## Firebase
+
+### REST authentication
 
 - [Sign up with email / password](https://firebase.google.com/docs/reference/rest/auth#section-create-email-password)
 - [Sign in with email / password](https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password)
 
-## Firebase separate rules per field
+### Separate rules per field
 
 `Develop > Database > Rules`
 
@@ -459,6 +493,38 @@ try {
   }
 }
 ```
+
+### REST API
+
+> **Add Indexing to your Firebase Realtime Database Rules**: If you're using `orderBy` in your app, you need to define the keys you will be indexing on via the `.indexOn` rule in your Firebase Realtime Database Rules. Read the [documentation](https://firebase.google.com/docs/database/security/indexing-data) on the `.indexOn` rule for more information.
+
+```json
+{
+  "rules": {
+    "ingredients": {
+      ".read": true,
+      ".write": true
+    },
+    "orders": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": "localId"
+    }
+  }
+}
+```
+
+```js
+// order by local id and filter orders where localId is equal to specified localId
+const queryParams = `?auth=${token}&orderBy="localId"&equalTo="${localId}"`;
+const response = await axios.get('/orders.json' + queryParams, {
+  /* axios options */
+});
+```
+
+- [Query Parameters](https://firebase.google.com/docs/reference/rest/database#section-query-parameters)
+- [Filtering Data](https://firebase.google.com/docs/database/rest/retrieve-data#section-rest-filtering)
+- Ordering before filtering: [orderBy](https://firebase.google.com/docs/database/rest/retrieve-data#orderby)
 
 ## Auto-focusing `<NavLink>` after `<Redirect>`
 

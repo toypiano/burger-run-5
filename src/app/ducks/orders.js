@@ -82,9 +82,12 @@ export const fetchFail = (error) => ({
 });
 
 // Thunks
-export const orderBurger = (order, source, token) => async (dispatch) => {
+export const orderBurger = (order, source, token, localId) => async (
+  dispatch
+) => {
   try {
     dispatch(orderRequest(order));
+
     const response = await axios.post('/orders.json?auth=' + token, order, {
       cancelToken: source.token,
     });
@@ -103,10 +106,11 @@ export const orderBurger = (order, source, token) => async (dispatch) => {
  *
  * @param {Source} source request source from axios.CancelToken.token()
  */
-export const fetchOrders = (token) => async (dispatch) => {
+export const fetchOrders = (token, localId) => async (dispatch) => {
   let cancel;
   try {
-    const response = await axios.get('/orders.json?auth=' + token, {
+    const queryParams = `?auth=${token}&orderBy="localId"&equalTo="${localId}"`;
+    const response = await axios.get('/orders.json' + queryParams, {
       cancelToken: new Axios.CancelToken((c) => (cancel = c)),
     });
 

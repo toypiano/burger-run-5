@@ -12,13 +12,13 @@ Orders.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-function Orders({ className, orders, fetchOrders, idToken }) {
+function Orders({ className, orders, fetchOrders, idToken, localId }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let cancel;
     (async () => {
-      cancel = await fetchOrders(idToken); // call thunked dispatcher with source
+      cancel = await fetchOrders(idToken, localId); // call thunked dispatcher with source
       setIsLoading(false); // spinner off when done
     })();
     return () => {
@@ -26,7 +26,7 @@ function Orders({ className, orders, fetchOrders, idToken }) {
         cancel('request canceled by user(Orders)'); // cleanup: cancel req with specified token on unmount
       }
     };
-  }, [fetchOrders, idToken]);
+  }, [fetchOrders, idToken, localId]);
   return (
     <div className={className}>
       {!idToken && <Redirect to="/" />}
@@ -47,6 +47,7 @@ const StyledOrders = styled(Orders)`
   ${(props) => css`
     background: var(--cl-accent);
     position: relative;
+    min-height: 100vmax;
     z-index: var(--z-orders);
     padding: var(--h-navbar) 1em;
   `}

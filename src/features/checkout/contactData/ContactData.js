@@ -24,6 +24,7 @@ function ContactData({
   orderBurger,
   idToken,
   userId,
+  email,
 }) {
   // rendering starts
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +32,13 @@ function ContactData({
   const [isFormValid, setIsFormValid] = useState(false);
   const sourceRef = useRef(Axios.CancelToken.source());
   // effect function will run after ContactData return + DOM update
+  useEffect(() => {
+    updateOrderForm((d) => {
+      d.email.value = email;
+      d.email.touched = true;
+      d.email.valid = true;
+    });
+  }, [updateOrderForm, email]);
   useEffect(() => {
     const isFormValid = Object.keys(orderForm).reduce(
       (isValid, field) => isValid && orderForm[field].valid,

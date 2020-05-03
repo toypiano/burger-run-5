@@ -34,6 +34,7 @@ const Input = ({
   onChange,
   focused,
   autoFocus,
+  value,
 }) => {
   switch (inputType) {
     case 'input':
@@ -41,6 +42,7 @@ const Input = ({
         <StyledInput
           as="input"
           {...config}
+          value={value}
           valid={valid}
           touched={touched}
           onChange={onChange}
@@ -57,6 +59,7 @@ const Input = ({
           touched={touched}
           onChange={onChange}
           autoFocus={autoFocus}
+          value={value}
         />
       );
     case 'select':
@@ -68,6 +71,7 @@ const Input = ({
           touched={touched}
           onChange={onChange}
           autoFocus={autoFocus}
+          value={value}
         >
           {config.options.map((option) =>
             option.value ? (

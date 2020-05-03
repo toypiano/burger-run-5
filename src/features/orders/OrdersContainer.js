@@ -5,9 +5,9 @@ import * as actionCreators from '../../app/ducks/orders';
 const mapState = (state) => {
   const {
     orders: { orders },
-    auth: { idToken },
+    auth: { idToken, localId },
   } = state;
-  return { orders, idToken }; // returning prop (object) here
+  return { orders, idToken, localId }; // returning prop (object) here
 };
 
 export default connect(mapState, actionCreators)(Orders);
