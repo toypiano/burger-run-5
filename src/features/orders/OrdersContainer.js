@@ -10,4 +10,8 @@ const mapState = (state) => {
   return { orders, idToken, localId }; // returning prop (object) here
 };
 
-export default connect(mapState, actionCreators)(Orders);
+export const test = 'some test';
+
+const OrderContainer = connect(mapState, actionCreators)(Orders);
+
+export default OrderContainer;

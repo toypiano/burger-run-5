@@ -4,7 +4,8 @@ import Modal from '../ui/Modal';
 import useHttpErrorHandler from '../hooks/useHttpErrorHandler';
 
 export default function withErrorHandler(C, axios) {
-  return (props) => {
+  return function WithErrorHandler(props) {
+    WithErrorHandler.displayName = `WithErrorHandler(${getDisplayName(C)})`;
     const [error, closeErrorModal] = useHttpErrorHandler(axios);
     return (
       <>
@@ -16,4 +17,8 @@ export default function withErrorHandler(C, axios) {
       </>
     );
   };
+}
+
+function getDisplayName(WrappedComponent) {
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }

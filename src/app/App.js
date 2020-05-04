@@ -2,10 +2,18 @@ import React, { useEffect } from 'react';
 import LayoutContainer from '../features/layout/LayoutContainer';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import BurgerBuilderContainer from '../features/burgerBuilder/BurgerBuilderContainer';
-import CheckoutContainer from '../features/checkout/CheckoutContainer';
-import OrdersContainer from '../features/orders/OrdersContainer';
-import AuthContainer from '../features/auth/AuthContainer';
 import SignOutContainer from '../features/auth/SignOutContainer';
+import withLazy from '../common/hoc/withLazy';
+
+const asyncCheckout = withLazy(() =>
+  import('../features/checkout/CheckoutContainer')
+);
+
+const asyncOrders = withLazy(() =>
+  import('../features/orders/OrdersContainer')
+);
+
+const asyncAuth = withLazy(() => import('../features/auth/AuthContainer'));
 
 function App({ checkAuthStatus, isAuthenticated }) {
   useEffect(() => {
@@ -15,15 +23,15 @@ function App({ checkAuthStatus, isAuthenticated }) {
   const routes = isAuthenticated ? (
     <Switch>
       <Route path="/" exact component={BurgerBuilderContainer} />
-      <Route path="/checkout" component={CheckoutContainer} />
-      <Route path="/orders" component={OrdersContainer} />
+      <Route path="/checkout" component={asyncCheckout} />
+      <Route path="/orders" component={asyncOrders} />
       <Route path="/signout" component={SignOutContainer} />
       <Redirect to="/" />
     </Switch>
   ) : (
     <Switch>
       <Route path="/" exact component={BurgerBuilderContainer} />
-      <Route path="/auth" component={AuthContainer} />
+      <Route path="/auth" component={asyncAuth} />
       <Redirect to="/" />
     </Switch>
   );
