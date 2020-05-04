@@ -87,9 +87,9 @@ export const clearAuthTimeout = () => {
 
 // Thunks Action Dispatcher
 const SIGN_UP =
-  'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA1pWZdfPD4UUUAre_lIUZK-WwyZvIyuW4';
+  'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=';
 const SIGN_IN =
-  'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA1pWZdfPD4UUUAre_lIUZK-WwyZvIyuW4';
+  'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=';
 
 export const auth = (email, password, isSignIn) => async (dispatch) => {
   dispatch(authRequest());
